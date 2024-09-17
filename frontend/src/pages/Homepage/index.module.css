@@ -1,0 +1,127 @@
+.homepage {
+    width: 100vw;
+    height: 100vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+
+}
+
+.navbar {
+    width: 100%;
+    margin: 0 auto;
+    height: 50px;
+    box-shadow: 0 0 8.45px 0.45px rgba(0, 0, 0, 0.3);
+
+    .buttons {
+        width: 950px;
+        max-width: 100vw;
+        margin: 0 auto;
+        height: 100%;
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        gap: 0.7vw;
+
+        div {
+            font-size: 0.8rem;
+            border: 1px solid;
+            width: 100px;
+            height: 65%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 1.3em;
+            color: white;
+            background-color: #FF7373;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        div:hover{
+            transform: scale(1.02, 1.02);
+        }
+
+        .green {
+            background-color: #73ABFF;
+        }
+    }
+}
+
+.stories {
+    width: 900px;
+    max-width: 100vw;
+    margin: 1.5vh auto;
+
+    .categories {
+        width: 900px;
+        max-width: 100%;
+        margin: 0 auto;
+        display: flex;
+        list-style: none;
+        padding: 1vh 0;
+        display: flex;
+        justify-content: space-around;
+        overflow-y: hidden;
+        overflow-x: auto;
+        gap: 1vw;
+
+        li {
+            box-sizing: border-box;
+            position: relative;
+            min-width: 160px;
+            height: 160px;
+            border-radius: 1.2em;
+            color: black;
+            font-size: 1.5rem;
+            font-weight: 500;
+            color: white;
+            background-color: black;
+            
+            img {
+                width: 100%;
+                height: 100%;
+                border-radius: inherit;
+                object-fit: cover;
+                opacity: 0.5;
+                z-index: -1;
+                
+            }
+
+            span {
+                position: absolute;
+                left: 50%;
+                top: 50%;
+                transform: translate(-50%, -50%);
+                z-index: 2;
+            }
+
+        }
+
+        .selCategory {
+            border:0.15em solid #00ACD2;
+        }
+
+    }
+
+    .topStories {
+        margin-top: 3vh;
+        font-size: 1.1rem;
+        display: flex;
+        flex-direction: column;
+   
+        align-items: center;
+
+        .allStories {
+            position: relative;
+            width: 100%;
+            height: 200px;
+            font-size: 1.1em;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: 600;
+            color: #8E8E8E;
+        }
+
+    }
+}
