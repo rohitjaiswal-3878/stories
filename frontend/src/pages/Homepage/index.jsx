@@ -5,8 +5,10 @@ import medicalIcon from "../../assets/medical.png";
 import fruitsIcon from "../../assets/fruits.png";
 import worldIcon from "../../assets/world.png";
 import indiaIcon from "../../assets/india.png";
+import { Outlet, useNavigate } from "react-router-dom";
 
 function Homepage() {
+  const navigate = useNavigate();
   const categories = [
     {
       title: "All",
@@ -29,12 +31,15 @@ function Homepage() {
       image: indiaIcon,
     },
   ];
+
   return (
     <div className={styles.homepage}>
       <div className={styles.navbar}>
         <div className={styles.buttons}>
-          <div>Register Now</div>
-          <div className={styles.green}>Sign In</div>
+          <div onClick={() => navigate("/register")}>Register Now</div>
+          <div className={styles.green} onClick={() => navigate("/login")}>
+            Sign In
+          </div>
         </div>
       </div>
 
@@ -62,6 +67,8 @@ function Homepage() {
           </div>
         </div>
       </div>
+
+      <Outlet />
     </div>
   );
 }

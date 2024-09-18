@@ -1,0 +1,63 @@
+
+.commonFormContainer {
+    text-align: center;
+
+    h3 {
+        font-size: 1.4rem;
+        margin-bottom: 35px;
+    }
+
+    form {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1.2rem;
+
+
+        div {
+            width: 80%;
+            position: relative;
+            display: flex;
+            justify-content: space-between;
+       }
+        div label {
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+        
+        div input {
+            width: 58%;
+            padding: 8px 9px;
+            outline: none;
+            border: 1.1px solid black;
+            font-size: 0.65rem;
+        }
+        div #password {
+            padding-right: 25px;
+        }
+        div img {
+            width: 1.1rem;
+            position: absolute;
+            right: 5px;
+            top: 9px;
+            cursor: pointer;
+        }
+
+        button {
+            margin-top: 5%;
+            width: 23%;
+            padding: 8px 0px;
+            border-radius: 20px;
+            font-size: 1rem;
+            font-weight: 700;
+            outline: none;
+            border: none;
+            background-color: #73ABFF;
+            cursor: pointer;
+        }
+
+        button:hover {
+            transform: scale(1.02,1.02);
+        }
+    }
+}
