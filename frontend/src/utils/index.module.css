@@ -11,7 +11,7 @@
         display: flex;
         flex-direction: column;
         align-items: center;
-        gap: 1.2rem;
+    
 
 
         div {
@@ -19,6 +19,13 @@
             position: relative;
             display: flex;
             justify-content: space-between;
+
+            .inputTool {
+                width: 70%;
+                display: flex;
+                justify-content: end;
+                gap: 10px;
+            }
        }
         div label {
             font-size: 1.2rem;
@@ -26,7 +33,7 @@
         }
         
         div input {
-            width: 58%;
+            width: 80%;
             padding: 8px 9px;
             outline: none;
             border: 1.1px solid black;
@@ -35,16 +42,16 @@
         div #password {
             padding-right: 25px;
         }
-        div img {
+        div #eyeIcon {
             width: 1.1rem;
             position: absolute;
-            right: 5px;
+            right: 30px;
             top: 9px;
             cursor: pointer;
         }
 
         button {
-            margin-top: 5%;
+            margin-top: 9%;
             width: 23%;
             padding: 8px 0px;
             border-radius: 20px;
