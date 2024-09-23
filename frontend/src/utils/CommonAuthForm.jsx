@@ -8,7 +8,7 @@ import toolTip from "../assets/tool-tip.png";
 function CommonAuthForm({ children }) {
   const [togglePassword, setTogglePassword] = useState(true);
 
-  const { formData, handleInput, handleSubmit, errors } =
+  const { formData, handleInput, handleSubmit, errors, loader } =
     useContext(RegisterContext);
 
   return (
@@ -100,10 +100,10 @@ function CommonAuthForm({ children }) {
             {errors.password}
           </span>
         )}
-        <button type="submit">{children}</button>
+        <button type="submit" disabled={loader}>{!loader ? children : (<div id={styles.loader}></div>)}</button>
       </form>
     </div>
   );
-}
+} 
 
 export default CommonAuthForm;

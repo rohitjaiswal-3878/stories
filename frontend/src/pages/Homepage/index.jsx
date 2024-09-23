@@ -6,6 +6,8 @@ import fruitsIcon from "../../assets/fruits.png";
 import worldIcon from "../../assets/world.png";
 import indiaIcon from "../../assets/india.png";
 import { Outlet, useNavigate } from "react-router-dom";
+import toast, { Toaster } from "react-hot-toast";
+
 
 function Homepage() {
   const navigate = useNavigate();
@@ -67,7 +69,8 @@ function Homepage() {
           </div>
         </div>
       </div>
-
+      <Toaster
+      />
       <Outlet />
     </div>
   );

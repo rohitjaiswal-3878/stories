@@ -7,9 +7,11 @@ import { useNavigate } from "react-router-dom";
 import RegisterContext from "../../context/RegisterContext";
 import { useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
+import { registerUser } from "../../apis/auth";
 
 function Register() {
   const navigate = useNavigate();
+  const [loader, setLoader] = useState(false)
   const [formData, setFormData] = useState({
     username: "",
     password: "",
@@ -33,6 +35,7 @@ function Register() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    
     let err = 0;
     const { username, password } = formData;
 
@@ -55,14 +58,36 @@ function Register() {
     }
 
     if (err == 0) {
-      toast.success("User registered successfully!");
+      setLoader(true)
+      registerUser(formData).then(res => {
+        if(res.status == 200) {  
+          toast.success(res.data.msg)        
+          setFormData({
+            username: "",
+            password: ""
+          })
+          setLoader(false)
+          setTimeout(() => {
+            onClose()
+          }, 1000)
+          
+        }else if(res.status == 400) {
+          toast.error(res.data.msg)
+          setLoader(false)
+
+        }else{
+          toast.error(res.data.msg)
+          setLoader(false)
+
+        }
+      })
     }
   };
 
   return (
     <MyModal>
       <RegisterContext.Provider
-        value={{ formData, handleInput, handleSubmit, errors }}
+        value={{ formData, handleInput, handleSubmit, errors, loader }}
       >
         <div className={styles.container}>
           <CommonAuthForm>
@@ -71,16 +96,6 @@ function Register() {
           <img src={crossIcon} alt="cross icon" onClick={onClose} />
         </div>
       </RegisterContext.Provider>
-      <Toaster
-        toastOptions={{
-          style: {
-            width: "225px",
-            height: "50px !important",
-            fontSize: "13px",
-            padding: "5px 5px",
-          },
-        }}
-      />
     </MyModal>
   );
 }
