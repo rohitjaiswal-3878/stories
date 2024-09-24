@@ -69,7 +69,7 @@ function Homepage() {
               Sign In
             </div>
           ) : (
-            <div>Add story</div>
+            <div onClick={() => navigate("/create")}>Add story</div>
           )}
 
           {token && (

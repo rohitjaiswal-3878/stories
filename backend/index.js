@@ -5,7 +5,9 @@ const app = express();
 const connectToDb = require("./connect");
 const cors = require("cors");
 const authRouter = require("./routes/auth");
+const storyRouter = require("./routes/stories");
 const bodyParser = require("body-parser");
+const { authMiddleware } = require("./middlewares/auth");
 
 const port = process.env.PORT || 8000;
 
@@ -29,6 +31,7 @@ app.use((req, res, next) => {
   next();
 });
 
+app.use("/story", authMiddleware, storyRouter);
 app.use("/auth", authRouter);
 
 // Handling errors
