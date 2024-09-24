@@ -7,9 +7,11 @@ import CommonAuthForm from "../../utils/CommonAuthForm";
 import RegisterContext from "../../context/RegisterContext";
 import toast, { Toaster } from "react-hot-toast";
 import { useState } from "react";
+import { loginUser } from "../../apis/auth";
 
 function Login() {
   const navigate = useNavigate();
+  const [loader, setLoader] = useState(false);
   const [formData, setFormData] = useState({
     username: "",
     password: "",
@@ -29,9 +31,24 @@ function Login() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    let err = 0;
+    setLoader(true);
 
-    toast.success("Successfully logged in!");
+    loginUser(formData).then((res) => {
+      if (res.status == "200") {
+        localStorage.setItem("token", res.headers["x-token"]);
+        localStorage.setItem("username", formData.username);
+
+        navigate("/");
+        setLoader(false);
+        toast.success(res.data.msg);
+      } else if (res.status == "400") {
+        toast.error(res.data.msg);
+        setLoader(false);
+      } else {
+        toast.error(res.data.msg);
+        setLoader(false);
+      }
+    });
   };
 
   const onClose = () => {
@@ -40,7 +57,7 @@ function Login() {
   return (
     <MyModal>
       <RegisterContext.Provider
-        value={{ formData, handleInput, handleSubmit, errors }}
+        value={{ formData, handleInput, handleSubmit, errors, loader }}
       >
         <div className={styles.container}>
           <CommonAuthForm>
@@ -49,16 +66,6 @@ function Login() {
           <img src={crossIcon} alt="cross icon" onClick={onClose} />
         </div>
       </RegisterContext.Provider>
-      <Toaster
-        toastOptions={{
-          style: {
-            width: "200px",
-            height: "50px !important",
-            fontSize: "13px",
-            padding: "5px 5px",
-          },
-        }}
-      />
     </MyModal>
   );
 }

@@ -12,4 +12,16 @@ const registerUser = async (formData) => {
   }
 };
 
-export { registerUser };
+const loginUser = async (formData) => {
+  try {
+    const response = await axios.post(
+      `${import.meta.env.VITE_APP_BACKEND}/auth/login`,
+      { ...formData }
+    );
+    return response;
+  } catch (error) {
+    return error.response;
+  }
+};
+
+export { registerUser, loginUser };
