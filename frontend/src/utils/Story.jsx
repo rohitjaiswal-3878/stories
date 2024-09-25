@@ -2,23 +2,32 @@ import React from "react";
 import styles from "./index.module.css";
 import storyImg from "../assets/story.png";
 import editImg from "../assets/edit.png";
+import { useNavigate } from "react-router-dom";
 
-function Story() {
+function Story({ story }) {
+  const navigate = useNavigate();
   return (
     <div className={styles.story}>
-      <img src={storyImg} alt="Story image" />
+      {story.slides[0].imageURL.match(/(\.mp4|\.3gp|\.webm)/) ? (
+        <video src={story.slides[0].imageURL} muted></video>
+      ) : (
+        <img src={story.slides[0].imageURL} alt="Story image" />
+      )}
+
       <div className={styles.details}>
-        <h2>Heading comes here</h2>
-        <p>
-          Inspirational designs, illustrations, and graphic elements from the
-          world’s best designers.
-        </p>
+        <h2>{story.slides[0].heading}</h2>
+        <p>{story.slides[0].description}</p>
       </div>
 
       <div className={styles.edit}>
         <img src={editImg} alt="" /> <span>Edit</span>
       </div>
-      <div className={styles.blackShadow}></div>
+      <div
+        className={styles.blackShadow}
+        onClick={() =>
+          navigate(`/view/${story._id}/slide/${story.slides[0]._id}`)
+        }
+      ></div>
     </div>
   );
 }

@@ -15,7 +15,7 @@ function App() {
             <Route path="login" element={<Login />} />
             <Route path="register" element={<Register />} />
             <Route path="create" element={<CreateStory />} />
-            <Route path="view" element={<ViewStory />} />
+            <Route path="view/:id/slide/:slideId" element={<ViewStory />} />
           </Route>
         </Routes>
       </div>

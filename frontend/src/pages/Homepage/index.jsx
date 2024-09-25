@@ -11,12 +11,14 @@ import bookmarkIcon from "../../assets/bookmark.jpg";
 import profileImg from "../../assets/profileImg.png";
 import hamburger from "../../assets/hamburger.png";
 import Stories from "../../components/Stories";
+import { getAllStories } from "../../apis/story";
 
 function Homepage() {
   const navigate = useNavigate();
   const location = useLocation();
   const [token, setToken] = useState("");
   const [menu, setMenu] = useState();
+  const [yourStories, setYourStories] = useState([]);
   const categories = [
     {
       title: "All",
@@ -44,6 +46,16 @@ function Homepage() {
     setToken(localStorage.getItem("token"));
     setMenu(false);
   }, [location]);
+
+  useEffect(() => {
+    getAllStories()
+      .then((res) => {
+        setYourStories([...res.data]);
+      })
+      .catch((err) => {
+        toast.error("Something went wrong while loading your stories!");
+      });
+  }, []);
 
   return (
     <div className={styles.homepage}>
@@ -116,7 +128,7 @@ function Homepage() {
           ))}
         </ul>
 
-        <Stories>
+        <Stories stories={yourStories}>
           <span>Your Stories</span>
         </Stories>
       </div>

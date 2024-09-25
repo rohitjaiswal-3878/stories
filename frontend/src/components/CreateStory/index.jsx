@@ -188,10 +188,10 @@ function CreateStory() {
               ></textarea>
             </div>
             <div>
-              <label htmlFor="">Image:</label>
+              <label htmlFor="">Image/video:</label>
               <input
                 type="text"
-                placeholder="Add Image url"
+                placeholder="Add Image/video url"
                 name="imageURL"
                 onChange={handleInput}
                 value={slides[selSlide].imageURL}

@@ -14,7 +14,7 @@ const authMiddleware = async (req, res, next) => {
       req.body.userId = verify._id;
       next();
     } else {
-      return res.status(402).json({ msg: "Unauthorized access!" });
+      return res.status(403).json({ msg: "Unauthorized access!" });
     }
   } catch (error) {
     next(error);
