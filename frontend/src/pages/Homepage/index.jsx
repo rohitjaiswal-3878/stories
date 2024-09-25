@@ -10,6 +10,7 @@ import toast, { Toaster } from "react-hot-toast";
 import bookmarkIcon from "../../assets/bookmark.jpg";
 import profileImg from "../../assets/profileImg.png";
 import hamburger from "../../assets/hamburger.png";
+import Stories from "../../components/Stories";
 
 function Homepage() {
   const navigate = useNavigate();
@@ -115,19 +116,9 @@ function Homepage() {
           ))}
         </ul>
 
-        <div className={styles.topStories}>
-          <h3>Top Stories About food</h3>
-          <div className={styles.allStories}>
-            <span>No stories Available</span>
-          </div>
-        </div>
-
-        <div className={styles.topStories}>
-          <h3>Top Stories About food</h3>
-          <div className={styles.allStories}>
-            <span>No stories Available</span>
-          </div>
-        </div>
+        <Stories>
+          <span>Your Stories</span>
+        </Stories>
       </div>
       <Toaster />
       <Outlet />

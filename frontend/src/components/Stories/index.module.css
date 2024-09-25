@@ -1,0 +1,35 @@
+.topStories {
+    margin-top: 3vh;
+    font-size: 1.1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    .allStories {
+        position: relative;
+        width: 100%;
+        height: 350px;
+        font-size: 1.1em;
+        display: flex;
+        justify-content: space-between  ;
+        align-items: center;
+        font-weight: 600;
+        color: #8E8E8E;
+    }
+
+    .seeMore {
+        width: 100px;
+        height: 32px;
+        border-radius: 20px;
+        border: none;
+        background-color: #FF7373;
+        color: white;
+        outline: none;
+        cursor: pointer;
+    }
+
+    .seeMore:hover {
+        transform: scale(1.02);
+    }
+
+}

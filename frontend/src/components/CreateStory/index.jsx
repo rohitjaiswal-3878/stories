@@ -252,7 +252,12 @@ function CreateStory() {
           </button>
         </div>
 
-        <img src={crossIcon} alt="cross" className={styles.cross} />
+        <img
+          src={crossIcon}
+          alt="cross"
+          className={styles.cross}
+          onClick={() => navigate("/")}
+        />
         {error && <span className={styles.error}>{error}</span>}
       </div>
     </MyModal>
