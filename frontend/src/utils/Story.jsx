@@ -4,7 +4,7 @@ import storyImg from "../assets/story.png";
 import editImg from "../assets/edit.png";
 import { useNavigate } from "react-router-dom";
 
-function Story({ story }) {
+function Story({ story, userId }) {
   const navigate = useNavigate();
   return (
     <div className={styles.story}>
@@ -19,9 +19,12 @@ function Story({ story }) {
         <p>{story.slides[0].description}</p>
       </div>
 
-      <div className={styles.edit}>
-        <img src={editImg} alt="" /> <span>Edit</span>
-      </div>
+      {userId == story.userId && (
+        <div className={styles.edit}>
+          <img src={editImg} alt="" /> <span>Edit</span>
+        </div>
+      )}
+
       <div
         className={styles.blackShadow}
         onClick={() =>

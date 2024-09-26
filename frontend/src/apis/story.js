@@ -52,4 +52,30 @@ const getStoryByIdAndSlide = async (storyId, slideId) => {
     return error.response;
   }
 };
-export { createStory, getAllStories, getStoryByIdAndSlide };
+
+const getStoriesByCategory = async (selCat) => {
+  try {
+    const filter = selCat.join(",");
+    const response = await axios.get(
+      `
+      ${import.meta.env.VITE_APP_BACKEND}/story/stories/${filter}
+      `,
+      {
+        headers: {
+          "x-token": localStorage.getItem("token"),
+        },
+      }
+    );
+
+    return response;
+  } catch (error) {
+    return error.response;
+  }
+};
+
+export {
+  createStory,
+  getAllStories,
+  getStoryByIdAndSlide,
+  getStoriesByCategory,
+};

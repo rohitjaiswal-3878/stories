@@ -11,7 +11,7 @@ import bookmarkIcon from "../../assets/bookmark.jpg";
 import profileImg from "../../assets/profileImg.png";
 import hamburger from "../../assets/hamburger.png";
 import Stories from "../../components/Stories";
-import { getAllStories } from "../../apis/story";
+import { getAllStories, getStoriesByCategory } from "../../apis/story";
 
 function Homepage() {
   const navigate = useNavigate();
@@ -19,6 +19,7 @@ function Homepage() {
   const [token, setToken] = useState("");
   const [menu, setMenu] = useState();
   const [yourStories, setYourStories] = useState([]);
+  const [seeMore, setSeeMore] = useState("");
   const categories = [
     {
       title: "All",
@@ -41,6 +42,8 @@ function Homepage() {
       image: indiaIcon,
     },
   ];
+  const [stories, setStories] = useState({});
+  const [selCat, setSelCat] = useState(["all"]);
 
   useEffect(() => {
     setToken(localStorage.getItem("token"));
@@ -48,14 +51,47 @@ function Homepage() {
   }, [location]);
 
   useEffect(() => {
-    getAllStories()
+    getData(); // Gets your stories.
+  }, [selCat]);
+
+  function getData() {
+    if (localStorage.getItem("token")) {
+      getAllStories()
+        .then((res) => {
+          setYourStories([...res.data]);
+        })
+        .catch((err) => {
+          toast.error("Something went wrong while loading your stories!");
+        });
+    }
+    getStoriesByCategory(selCat)
       .then((res) => {
-        setYourStories([...res.data]);
+        if (res.status == 200) {
+          setStories(res.data);
+        }
       })
       .catch((err) => {
-        toast.error("Something went wrong while loading your stories!");
+        toast.error("Something went wrong!");
       });
-  }, []);
+  }
+
+  const handleSelCat = (category) => {
+    if (category == "all") {
+      setSelCat(["all"]);
+    } else {
+      if (selCat.includes(category)) {
+        let temp = selCat.filter((cat, index) => cat != category);
+        if (temp.length == 0) {
+          setSelCat(["all"]);
+        } else {
+          setSelCat([...temp]);
+        }
+      } else {
+        let temp = selCat.filter((cat, index) => cat != "all");
+        setSelCat([...temp, category]);
+      }
+    }
+  };
 
   return (
     <div className={styles.homepage}>
@@ -105,6 +141,7 @@ function Homepage() {
                   <button
                     onClick={() => {
                       localStorage.removeItem("token");
+                      setYourStories([]);
                       setToken("");
                       toast.success("Logged out successfully!");
                     }}
@@ -121,19 +158,52 @@ function Homepage() {
       <div className={styles.stories}>
         <ul className={styles.categories}>
           {categories.map((category, index) => (
-            <li key={index}>
+            <li
+              key={index}
+              onClick={() => handleSelCat(category.title.toLocaleLowerCase())}
+              className={
+                selCat.includes(category.title.toLocaleLowerCase())
+                  ? styles.selCategory
+                  : ""
+              }
+            >
               <img src={category.image} alt="" />
               <span>{category.title}</span>
             </li>
           ))}
         </ul>
 
-        <Stories stories={yourStories}>
-          <span>Your Stories</span>
-        </Stories>
+        {yourStories.length != 0 && (seeMore == "your" || seeMore == "") && (
+          <Stories
+            stories={yourStories}
+            seeMore={seeMore}
+            section={"your"}
+            setSeeMore={setSeeMore}
+            userId={yourStories[0].userId}
+          >
+            <span>Your Stories</span>
+          </Stories>
+        )}
+
+        {Object.keys(stories).map((cat, i) => {
+          if (seeMore == cat || seeMore == "") {
+            return (
+              <Stories
+                seeMore={seeMore}
+                setSeeMore={setSeeMore}
+                key={i}
+                section={cat}
+                stories={stories[cat]}
+                userId={yourStories.length != 0 ? yourStories[0].userId : ""}
+              >
+                <span>Top Stories About {cat}</span>
+              </Stories>
+            );
+          }
+        })}
       </div>
       <Toaster />
-      <Outlet />
+      <Outlet context={getData} />
     </div>
   );
 }

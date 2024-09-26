@@ -31,7 +31,7 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use("/story", authMiddleware, storyRouter);
+app.use("/story", storyRouter);
 app.use("/auth", authRouter);
 
 // Handling errors

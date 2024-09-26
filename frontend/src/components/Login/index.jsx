@@ -8,9 +8,11 @@ import RegisterContext from "../../context/RegisterContext";
 import toast, { Toaster } from "react-hot-toast";
 import { useState } from "react";
 import { loginUser } from "../../apis/auth";
+import { useOutletContext } from "react-router-dom";
 
 function Login() {
   const navigate = useNavigate();
+  const getData = useOutletContext();
   const [loader, setLoader] = useState(false);
   const [formData, setFormData] = useState({
     username: "",
@@ -37,7 +39,7 @@ function Login() {
       if (res.status == "200") {
         localStorage.setItem("token", res.headers["x-token"]);
         localStorage.setItem("username", formData.username);
-
+        getData();
         navigate("/");
         setLoader(false);
         toast.success(res.data.msg);

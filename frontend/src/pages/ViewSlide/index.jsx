@@ -14,7 +14,6 @@ import { getStoryByIdAndSlide } from "../../apis/story";
 import { useEffect } from "react";
 import toast from "react-hot-toast";
 import { useState } from "react";
-import video from "../../assets/video1.mp4";
 import { useRef } from "react";
 
 function ViewStory() {
@@ -35,7 +34,6 @@ function ViewStory() {
           toast.error("Something went wrong!");
         });
     }
-
     // if (Object.keys(storyInfo).length != 0) {
     //   let timeout;
     //   if (visitIndex < storyInfo.slides.length - 1) {
@@ -54,6 +52,9 @@ function ViewStory() {
           className={styles.control}
           onClick={() => {
             if (visitIndex >= 1) {
+              navigate(
+                `/view/${id}/slide/${storyInfo.slides[visitIndex - 1]._id}`
+              );
               setVisitIndex(visitIndex - 1);
             }
           }}
@@ -120,6 +121,9 @@ function ViewStory() {
           className={styles.control}
           onClick={() => {
             if (visitIndex < storyInfo.slides.length - 1) {
+              navigate(
+                `/view/${id}/slide/${storyInfo.slides[visitIndex + 1]._id}`
+              );
               setVisitIndex(visitIndex + 1);
             }
           }}

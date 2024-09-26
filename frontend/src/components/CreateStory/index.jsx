@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from "react";
 import styles from "./index.module.css";
 import MyModal from "../MyModal";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useOutletContext } from "react-router-dom";
 import crossIcon from "../../assets/cross.jpg";
 import toast from "react-hot-toast";
 import { createStory } from "../../apis/story";
+import { useOutlet } from "react-router-dom";
 
 function CreateStory() {
   const navigate = useNavigate();
+  const getData = useOutletContext();
   const [error, setError] = useState("");
   const [slides, setSlides] = useState([
     {
@@ -116,6 +118,7 @@ function CreateStory() {
         if (res.status == "200") {
           toast.success(res.data.msg);
           setLoader(false);
+          getData();
           navigate("/");
         } else {
           toast.error(res.data.msg);
