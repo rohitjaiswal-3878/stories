@@ -1,5 +1,6 @@
 import axios from "axios";
 
+// Create story
 const createStory = async (slides) => {
   try {
     const response = await axios.post(
@@ -20,6 +21,7 @@ const createStory = async (slides) => {
   }
 };
 
+// Get story created by logged in user.
 const getAllStories = async () => {
   try {
     const response = await axios.get(
@@ -36,6 +38,7 @@ const getAllStories = async () => {
   }
 };
 
+// Gets story by story id and slide id.
 const getStoryByIdAndSlide = async (storyId, slideId) => {
   try {
     const response = await axios.get(
@@ -53,6 +56,7 @@ const getStoryByIdAndSlide = async (storyId, slideId) => {
   }
 };
 
+// Filter story by categories.
 const getStoriesByCategory = async (selCat) => {
   try {
     const filter = selCat.join(",");

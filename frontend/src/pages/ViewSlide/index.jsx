@@ -15,13 +15,20 @@ import { useEffect } from "react";
 import toast from "react-hot-toast";
 import { useState } from "react";
 import { useRef } from "react";
+import bookmarkBlue from "../../assets/bookmark-blue.png";
+import { getBookandLike, getLike, setBookAndLike } from "../../apis/data";
 
 function ViewStory() {
-  const { id, slideId } = useParams();
-  const [storyInfo, setStoryInfo] = useState({});
-  const [visitIndex, setVisitIndex] = useState(-1);
-  const loadOnce = useRef(true);
+  const navigate = useNavigate();
+  const { id, slideId } = useParams(); // Story id and slide id.
+  const [storyInfo, setStoryInfo] = useState({}); // Stories and visit index.
+  const [visitIndex, setVisitIndex] = useState(-1); // Stores visit index.
+  const loadOnce = useRef(true); // load once.
+  const [bookmarkState, setBookMarkState] = useState([-1]);
+  const [likeState, setLikeState] = useState([-1]);
+  const [like, setLike] = useState(null);
 
+  // loads story.
   useEffect(() => {
     if (loadOnce.current) {
       getStoryByIdAndSlide(id, slideId)
@@ -33,6 +40,27 @@ function ViewStory() {
         .catch((err) => {
           toast.error("Something went wrong!");
         });
+
+      if (localStorage.getItem("token")) {
+        getBookandLike(id).then((res) => {
+          if (res.status == 200) {
+            setBookMarkState(res.data.bookmark);
+            setLikeState(res.data.like);
+          } else {
+            toast.error(
+              "Something went wrong while loading bookmark and like data!"
+            );
+          }
+        });
+      }
+
+      getLike(id).then((res) => {
+        if (res.status == 200) {
+          setLike({ ...res.data });
+        } else {
+          toast.error("Something went wrong will loading like counts!");
+        }
+      });
     }
     // if (Object.keys(storyInfo).length != 0) {
     //   let timeout;
@@ -44,10 +72,10 @@ function ViewStory() {
     // }
   }, []);
 
-  const navigate = useNavigate();
   return (
     <>
       <div className={styles.container}>
+        {/* Previous slide. */}
         <div
           className={styles.control}
           onClick={() => {
@@ -61,7 +89,10 @@ function ViewStory() {
         >
           <img src={lessIcon} alt="" />
         </div>
+
+        {/* Slides */}
         <div className={styles.slides}>
+          {/* Number of slide. */}
           <ul className={styles.totalSlides}>
             {Object.keys(storyInfo).length != 0 &&
               storyInfo.slides.map((slide, index) => (
@@ -74,16 +105,36 @@ function ViewStory() {
               ))}
           </ul>
 
+          {/* Share and close button. */}
           <div className={styles.crossShare}>
             <img
               src={crossIcon}
               alt="cross icon"
               className={styles.cross}
-              onClick={() => navigate("/")}
+              onClick={() => {
+                if (localStorage.getItem("token")) {
+                  setBookAndLike(id, bookmarkState, likeState)
+                    .then((res) => {
+                      if (res.status == 200) {
+                        navigate("/");
+                      } else {
+                        toast.error(
+                          "Something went wrong while saving bookmark and like!"
+                        );
+                      }
+                    })
+                    .catch((err) => {
+                      console.log(err);
+                    });
+                } else {
+                  navigate("/");
+                }
+              }}
             />
             <img src={shareIcon} alt="share icon" />
           </div>
 
+          {/* Slide */}
           {Object.keys(storyInfo).length == 0 ? (
             "Loading..."
           ) : (
@@ -100,23 +151,87 @@ function ViewStory() {
                 <img src={storyInfo.slides[visitIndex].imageURL} alt="" />
               )}
 
+              {/* Details of slide. */}
               <div className={styles.details}>
                 <h2>{storyInfo.slides[visitIndex].heading}</h2>
                 <p>{storyInfo.slides[visitIndex].description}</p>
                 <div className={styles.saveLike}>
-                  <img src={saveIcon} alt="" className={styles.save} />
+                  {bookmarkState[0] != -1 &&
+                  bookmarkState.includes(storyInfo.slides[visitIndex]._id) ? (
+                    <img
+                      src={bookmarkBlue}
+                      alt=""
+                      onClick={() => {
+                        const newState = bookmarkState.filter(
+                          (b, i) => b != storyInfo.slides[visitIndex]._id
+                        );
+                        setBookMarkState([...newState]);
+                      }}
+                      className={styles.save}
+                    />
+                  ) : (
+                    <img
+                      src={saveIcon}
+                      onClick={() => {
+                        setBookMarkState([
+                          ...bookmarkState,
+                          storyInfo.slides[visitIndex]._id,
+                        ]);
+                      }}
+                      alt=""
+                      className={styles.save}
+                    />
+                  )}
 
                   <div className={styles.heart}>
-                    <img src={whiteHeart} alt="" />
-                    <span>10</span>
+                    {likeState[0] != -1 &&
+                    likeState.includes(storyInfo.slides[visitIndex]._id) ? (
+                      <img
+                        src={redHeart}
+                        onClick={() => {
+                          const newState = likeState.filter(
+                            (l, i) => l != storyInfo.slides[visitIndex]._id
+                          );
+                          setLikeState([...newState]);
+                          setLike({
+                            ...like,
+                            [storyInfo.slides[visitIndex]._id]:
+                              like[storyInfo.slides[visitIndex]._id] - 1,
+                          });
+                        }}
+                        alt=""
+                      />
+                    ) : (
+                      <img
+                        src={whiteHeart}
+                        onClick={() => {
+                          setLikeState([
+                            ...likeState,
+                            storyInfo.slides[visitIndex]._id,
+                          ]);
+                          setLike({
+                            ...like,
+                            [storyInfo.slides[visitIndex]._id]:
+                              like[storyInfo.slides[visitIndex]._id] + 1,
+                          });
+                        }}
+                        alt=""
+                      />
+                    )}
+                    {like != null && (
+                      <span>{like[storyInfo.slides[visitIndex]._id]}</span>
+                    )}
                   </div>
                 </div>
               </div>
             </>
           )}
 
+          {/* Black shadow */}
           <div className={styles.blackShadow}></div>
         </div>
+
+        {/* Next slide. */}
         <div
           className={styles.control}
           onClick={() => {

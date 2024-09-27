@@ -6,6 +6,7 @@ const connectToDb = require("./connect");
 const cors = require("cors");
 const authRouter = require("./routes/auth");
 const storyRouter = require("./routes/stories");
+const dataRouter = require("./routes/data");
 const bodyParser = require("body-parser");
 const { authMiddleware } = require("./middlewares/auth");
 
@@ -33,6 +34,7 @@ app.use((req, res, next) => {
 
 app.use("/story", storyRouter);
 app.use("/auth", authRouter);
+app.use("/data", dataRouter);
 
 // Handling errors
 app.use((err, req, res, next) => {

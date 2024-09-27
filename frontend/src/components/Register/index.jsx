@@ -6,12 +6,12 @@ import MyModal from "../MyModal";
 import { useNavigate } from "react-router-dom";
 import RegisterContext from "../../context/RegisterContext";
 import { useState } from "react";
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
 import { registerUser } from "../../apis/auth";
 
-function Register() {
+function Register({ setCurrentState }) {
   const navigate = useNavigate();
-  const [loader, setLoader] = useState(false)
+  const [loader, setLoader] = useState(false);
   const [formData, setFormData] = useState({
     username: "",
     password: "",
@@ -22,10 +22,16 @@ function Register() {
     password: "",
   });
 
+  // Handle close functionality of modal.
   const onClose = () => {
-    navigate("/");
+    setCurrentState({
+      login: false,
+      register: false,
+      create: false,
+    });
   };
 
+  // Handle form changes.
   const handleInput = (e) => {
     const name = e.target.name;
     const value = e.target.value;
@@ -33,9 +39,10 @@ function Register() {
     setFormData({ ...formData, [name]: value });
   };
 
+  // Handle form submit.
   const handleSubmit = (e) => {
     e.preventDefault();
-    
+
     let err = 0;
     const { username, password } = formData;
 
@@ -58,29 +65,26 @@ function Register() {
     }
 
     if (err == 0) {
-      setLoader(true)
-      registerUser(formData).then(res => {
-        if(res.status == 200) {  
-          toast.success(res.data.msg)        
+      setLoader(true);
+      registerUser(formData).then((res) => {
+        if (res.status == 200) {
+          toast.success(res.data.msg);
           setFormData({
             username: "",
-            password: ""
-          })
-          setLoader(false)
+            password: "",
+          });
+          setLoader(false);
           setTimeout(() => {
-            onClose()
-          }, 1000)
-          
-        }else if(res.status == 400) {
-          toast.error(res.data.msg)
-          setLoader(false)
-
-        }else{
-          toast.error(res.data.msg)
-          setLoader(false)
-
+            onClose();
+          }, 1000);
+        } else if (res.status == 400) {
+          toast.error(res.data.msg);
+          setLoader(false);
+        } else {
+          toast.error(res.data.msg);
+          setLoader(false);
         }
-      })
+      });
     }
   };
 
@@ -90,9 +94,12 @@ function Register() {
         value={{ formData, handleInput, handleSubmit, errors, loader }}
       >
         <div className={styles.container}>
+          {/* Registration form. */}
           <CommonAuthForm>
             <span>Register</span>
           </CommonAuthForm>
+
+          {/* close modal */}
           <img src={crossIcon} alt="cross icon" onClick={onClose} />
         </div>
       </RegisterContext.Provider>

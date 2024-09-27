@@ -1,13 +1,14 @@
 import React from "react";
 import styles from "./index.module.css";
 import Story from "../../utils/Story";
-import { useNavigate } from "react-router-dom";
 
 function Stories({ children, seeMore, setSeeMore, section, stories, userId }) {
-  const navigate = useNavigate();
   return (
     <div className={styles.topStories}>
+      {/* Heading */}
       <h3>{children}</h3>
+
+      {/* Contain all stories. */}
       <div
         className={styles.allStories}
         style={{
@@ -25,6 +26,7 @@ function Stories({ children, seeMore, setSeeMore, section, stories, userId }) {
             ))}
       </div>
 
+      {/* See more button */}
       <button
         className={styles.seeMore}
         onClick={() => {

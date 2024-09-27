@@ -4,6 +4,7 @@ const Stories = require("../models/Stories");
 const User = require("../models/User");
 const { authMiddleware } = require("../middlewares/auth");
 
+// Create story.
 router.post("/create", authMiddleware, async (req, res, next) => {
   try {
     const { userId, slides } = req.body;
@@ -23,6 +24,7 @@ router.post("/create", authMiddleware, async (req, res, next) => {
   }
 });
 
+// Get all story of particular user.
 router.get("/all", authMiddleware, async (req, res, next) => {
   try {
     const userId = req.body.userId;
@@ -33,6 +35,7 @@ router.get("/all", authMiddleware, async (req, res, next) => {
   }
 });
 
+// Get story and particular slide.
 router.get("/:id/slide/:slideId", async (req, res, next) => {
   try {
     const { id: storyId, slideId } = req.params;
@@ -50,6 +53,7 @@ router.get("/:id/slide/:slideId", async (req, res, next) => {
   }
 });
 
+// Filter story by categories.
 router.get("/stories/:filter", async (req, res, next) => {
   try {
     const filter = req.params.filter;

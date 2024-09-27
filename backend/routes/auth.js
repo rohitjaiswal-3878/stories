@@ -5,6 +5,7 @@ const router = express.Router();
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
+// Register user.
 router.post("/register", async (req, res, next) => {
   try {
     const { username, password } = req.body;
@@ -26,6 +27,7 @@ router.post("/register", async (req, res, next) => {
   }
 });
 
+// Login user.
 router.post("/login", async (req, res, next) => {
   try {
     const { username, password } = req.body;

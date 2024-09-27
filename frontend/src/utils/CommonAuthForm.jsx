@@ -6,15 +6,19 @@ import RegisterContext from "../context/RegisterContext";
 import toolTip from "../assets/tool-tip.png";
 
 function CommonAuthForm({ children }) {
-  const [togglePassword, setTogglePassword] = useState(true);
+  const [togglePassword, setTogglePassword] = useState(true); // Toggle password.
 
   const { formData, handleInput, handleSubmit, errors, loader } =
-    useContext(RegisterContext);
+    useContext(RegisterContext); // Getting data from context.
 
   return (
     <div className={styles.commonFormContainer}>
+      {/* Heading */}
       <h3>{children}</h3>
+
+      {/* Form */}
       <form onSubmit={handleSubmit}>
+        {/* Username */}
         <div>
           <label htmlFor="">Username</label>
 
@@ -39,6 +43,8 @@ function CommonAuthForm({ children }) {
             )}
           </div>
         </div>
+
+        {/* Error */}
         {errors.username && children.props.children == "Register" && (
           <span
             style={{
@@ -53,6 +59,7 @@ function CommonAuthForm({ children }) {
           </span>
         )}
 
+        {/* Password */}
         <div style={{ marginTop: "25px" }}>
           <label htmlFor="">Password</label>
           <div className={styles.inputTool}>
@@ -87,6 +94,8 @@ function CommonAuthForm({ children }) {
             )}
           </div>
         </div>
+
+        {/* Error */}
         {errors.password && children.props.children == "Register" && (
           <span
             style={{
@@ -100,10 +109,14 @@ function CommonAuthForm({ children }) {
             {errors.password}
           </span>
         )}
-        <button type="submit" disabled={loader}>{!loader ? children : (<div id={styles.loader}></div>)}</button>
+
+        {/* Login and register. */}
+        <button type="submit" disabled={loader}>
+          {!loader ? children : <div id={styles.loader}></div>}
+        </button>
       </form>
     </div>
   );
-} 
+}
 
 export default CommonAuthForm;

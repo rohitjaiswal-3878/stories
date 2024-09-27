@@ -12,14 +12,17 @@ import profileImg from "../../assets/profileImg.png";
 import hamburger from "../../assets/hamburger.png";
 import Stories from "../../components/Stories";
 import { getAllStories, getStoriesByCategory } from "../../apis/story";
+import Login from "../../components/Login";
+import Register from "../../components/Register";
+import CreateStory from "../../components/CreateStory";
 
 function Homepage() {
   const navigate = useNavigate();
-  const location = useLocation();
-  const [token, setToken] = useState("");
-  const [menu, setMenu] = useState();
-  const [yourStories, setYourStories] = useState([]);
-  const [seeMore, setSeeMore] = useState("");
+  const location = useLocation(); // Gets the current path.
+  const [token, setToken] = useState(""); // Store the token.
+  const [menu, setMenu] = useState(); // Store the state of hamburger.
+  const [yourStories, setYourStories] = useState([]); // Store your stories.
+  const [seeMore, setSeeMore] = useState(""); // Store the state of see more button.
   const categories = [
     {
       title: "All",
@@ -41,19 +44,28 @@ function Homepage() {
       title: "India",
       image: indiaIcon,
     },
-  ];
-  const [stories, setStories] = useState({});
-  const [selCat, setSelCat] = useState(["all"]);
+  ]; // all categories.
+  const [stories, setStories] = useState({}); // Store stories of all categories.
+  const [selCat, setSelCat] = useState(["all"]); // Store state of selected category.
 
+  const [currentState, setCurrentState] = useState({
+    login: false,
+    register: false,
+    create: false,
+  });
+
+  // Checks for token.
   useEffect(() => {
     setToken(localStorage.getItem("token"));
     setMenu(false);
-  }, [location]);
+  }, [currentState]);
 
+  // Gets the data on category change.
   useEffect(() => {
     getData(); // Gets your stories.
-  }, [selCat]);
+  }, [selCat, currentState]);
 
+  // Gets your story and all other stories created by other user.
   function getData() {
     if (localStorage.getItem("token")) {
       getAllStories()
@@ -75,6 +87,7 @@ function Homepage() {
       });
   }
 
+  // Handle category selection part.
   const handleSelCat = (category) => {
     if (category == "all") {
       setSelCat(["all"]);
@@ -95,10 +108,21 @@ function Homepage() {
 
   return (
     <div className={styles.homepage}>
+      {/* Navbar of homepage. */}
       <div className={styles.navbar}>
         <div className={styles.buttons}>
           {!token ? (
-            <div onClick={() => navigate("/register")}>Register Now</div>
+            <div
+              onClick={() =>
+                setCurrentState({
+                  login: false,
+                  register: true,
+                  create: false,
+                })
+              }
+            >
+              Register Now
+            </div>
           ) : (
             <div style={{ fontSize: "11px" }}>
               <img
@@ -114,11 +138,30 @@ function Homepage() {
             </div>
           )}
           {!token ? (
-            <div className={styles.green} onClick={() => navigate("/login")}>
+            <div
+              className={styles.green}
+              onClick={() =>
+                setCurrentState({
+                  login: true,
+                  register: false,
+                  create: false,
+                })
+              }
+            >
               Sign In
             </div>
           ) : (
-            <div onClick={() => navigate("/create")}>Add story</div>
+            <div
+              onClick={() =>
+                setCurrentState({
+                  login: false,
+                  register: false,
+                  create: true,
+                })
+              }
+            >
+              Add story
+            </div>
           )}
 
           {token && (
@@ -155,7 +198,9 @@ function Homepage() {
         </div>
       </div>
 
+      {/* Stories section. */}
       <div className={styles.stories}>
+        {/* All categories. */}
         <ul className={styles.categories}>
           {categories.map((category, index) => (
             <li
@@ -173,6 +218,7 @@ function Homepage() {
           ))}
         </ul>
 
+        {/* Your story section. */}
         {yourStories.length != 0 && (seeMore == "your" || seeMore == "") && (
           <Stories
             stories={yourStories}
@@ -185,6 +231,7 @@ function Homepage() {
           </Stories>
         )}
 
+        {/* Other stories section. */}
         {Object.keys(stories).map((cat, i) => {
           if (seeMore == cat || seeMore == "") {
             return (
@@ -202,8 +249,14 @@ function Homepage() {
           }
         })}
       </div>
+
       <Toaster />
+      {/* Login, register, create story, view story */}
       <Outlet context={getData} />
+
+      {currentState.login && <Login setCurrentState={setCurrentState} />}
+      {currentState.register && <Register setCurrentState={setCurrentState} />}
+      {currentState.create && <CreateStory setCurrentState={setCurrentState} />}
     </div>
   );
 }

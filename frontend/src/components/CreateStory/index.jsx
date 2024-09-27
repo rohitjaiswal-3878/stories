@@ -5,12 +5,11 @@ import { useNavigate, useOutletContext } from "react-router-dom";
 import crossIcon from "../../assets/cross.jpg";
 import toast from "react-hot-toast";
 import { createStory } from "../../apis/story";
-import { useOutlet } from "react-router-dom";
 
-function CreateStory() {
+function CreateStory({ setCurrentState }) {
   const navigate = useNavigate();
-  const getData = useOutletContext();
-  const [error, setError] = useState("");
+  const getData = useOutletContext(); // Gets the latest story after story creation.
+  const [error, setError] = useState(""); // Store error
   const [slides, setSlides] = useState([
     {
       heading: "",
@@ -30,9 +29,9 @@ function CreateStory() {
       imageURL: "",
       category: "",
     },
-  ]);
-  const [selSlide, setSelSlide] = useState(0);
-  const [loader, setLoader] = useState(false);
+  ]); // Store slides state.
+  const [selSlide, setSelSlide] = useState(0); // Keep track of selected slide.
+  const [loader, setLoader] = useState(false); // Store state of loader.
 
   // Checks for token.
   useEffect(() => {
@@ -99,6 +98,7 @@ function CreateStory() {
     let err = 0;
     let slideNo = [];
 
+    // Checks whether any field in slides are empty or not.
     slides.map((slide, index) => {
       if (
         slide.heading == "" ||
@@ -118,8 +118,11 @@ function CreateStory() {
         if (res.status == "200") {
           toast.success(res.data.msg);
           setLoader(false);
-          getData();
-          navigate("/");
+          setCurrentState({
+            login: false,
+            register: false,
+            create: false,
+          });
         } else {
           toast.error(res.data.msg);
         }
@@ -172,7 +175,7 @@ function CreateStory() {
         <div className={styles.slideData}>
           <form>
             <div>
-              <label htmlFor="">Heading:</label>
+              <label>Heading:</label>
               <input
                 type="text"
                 placeholder="Your heading"
@@ -182,7 +185,7 @@ function CreateStory() {
               />
             </div>
             <div>
-              <label htmlFor="">Description:</label>
+              <label>Description:</label>
               <textarea
                 name="description"
                 placeholder="Story Description"
@@ -191,7 +194,7 @@ function CreateStory() {
               ></textarea>
             </div>
             <div>
-              <label htmlFor="">Image/video:</label>
+              <label>Image/video:</label>
               <input
                 type="text"
                 placeholder="Add Image/video url"
@@ -201,7 +204,7 @@ function CreateStory() {
               />
             </div>
             <div className={styles.category}>
-              <label htmlFor="">Category:</label>
+              <label>Category:</label>
               <div>
                 <select
                   defaultValue={"default"}
@@ -255,12 +258,21 @@ function CreateStory() {
           </button>
         </div>
 
+        {/* Close create story modal. */}
         <img
           src={crossIcon}
           alt="cross"
           className={styles.cross}
-          onClick={() => navigate("/")}
+          onClick={() =>
+            setCurrentState({
+              login: false,
+              register: false,
+              create: false,
+            })
+          }
         />
+
+        {/* Error */}
         {error && <span className={styles.error}>{error}</span>}
       </div>
     </MyModal>

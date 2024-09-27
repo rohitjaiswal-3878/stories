@@ -1,5 +1,6 @@
 import axios from "axios";
 
+// Register user
 const registerUser = async (formData) => {
   try {
     const response = await axios.post(
@@ -12,6 +13,7 @@ const registerUser = async (formData) => {
   }
 };
 
+// Login user
 const loginUser = async (formData) => {
   try {
     const response = await axios.post(
