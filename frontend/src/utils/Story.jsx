@@ -23,7 +23,12 @@ function Story({ story, userId }) {
 
       {/* Edit button. */}
       {userId == story.userId && (
-        <div className={styles.edit}>
+        <div
+          className={styles.edit}
+          onClick={() => {
+            navigate(`/edit/${story._id}`);
+          }}
+        >
           <img src={editImg} alt="" /> <span>Edit</span>
         </div>
       )}

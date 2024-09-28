@@ -11,6 +11,7 @@ import bookmarkIcon from "../../assets/bookmark.jpg";
 import profileImg from "../../assets/profileImg.png";
 import hamburger from "../../assets/hamburger.png";
 import Stories from "../../components/Stories";
+import educationIcon from "../../assets/education.jpg";
 import { getAllStories, getStoriesByCategory } from "../../apis/story";
 import Login from "../../components/Login";
 import Register from "../../components/Register";
@@ -43,6 +44,10 @@ function Homepage() {
     {
       title: "India",
       image: indiaIcon,
+    },
+    {
+      title: "Education",
+      image: educationIcon,
     },
   ]; // all categories.
   const [stories, setStories] = useState({}); // Store stories of all categories.
@@ -124,7 +129,12 @@ function Homepage() {
               Register Now
             </div>
           ) : (
-            <div style={{ fontSize: "11px" }}>
+            <div
+              style={{ fontSize: "11px" }}
+              onClick={() => {
+                navigate("/bookmark");
+              }}
+            >
               <img
                 src={bookmarkIcon}
                 alt=""
@@ -252,7 +262,7 @@ function Homepage() {
 
       <Toaster />
       {/* Login, register, create story, view story */}
-      <Outlet context={getData} />
+      <Outlet context={{ getData }} />
 
       {currentState.login && <Login setCurrentState={setCurrentState} />}
       {currentState.register && <Register setCurrentState={setCurrentState} />}

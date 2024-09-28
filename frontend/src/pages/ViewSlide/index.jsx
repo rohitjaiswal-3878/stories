@@ -1,6 +1,6 @@
 import React from "react";
 import styles from "./index.module.css";
-import storyImg from "../../assets/story.png";
+import { saveAs } from "file-saver";
 import saveIcon from "../../assets/save.png";
 import whiteHeart from "../../assets/white.png";
 import redHeart from "../../assets/red.png";
@@ -12,11 +12,13 @@ import { useNavigate } from "react-router-dom";
 import { useParams } from "react-router-dom";
 import { getStoryByIdAndSlide } from "../../apis/story";
 import { useEffect } from "react";
-import toast from "react-hot-toast";
+import toast, { Toaster } from "react-hot-toast";
 import { useState } from "react";
 import { useRef } from "react";
 import bookmarkBlue from "../../assets/bookmark-blue.png";
 import { getBookandLike, getLike, setBookAndLike } from "../../apis/data";
+import downloadIcon from "../../assets/download.png";
+import downloadDone from "../../assets/download_done.png";
 
 function ViewStory() {
   const navigate = useNavigate();
@@ -27,6 +29,7 @@ function ViewStory() {
   const [bookmarkState, setBookMarkState] = useState([-1]);
   const [likeState, setLikeState] = useState([-1]);
   const [like, setLike] = useState(null);
+  const [downloadState, setDownloadState] = useState(true);
 
   // loads story.
   useEffect(() => {
@@ -72,6 +75,21 @@ function ViewStory() {
     // }
   }, []);
 
+  function download() {
+    return new Promise((resolve, reject) => {
+      saveAs(storyInfo.slides[visitIndex].imageURL, "story");
+      setTimeout(() => {
+        resolve();
+      }, 1000);
+    });
+  }
+  // Handle download
+  const handleDownload = () => {
+    setDownloadState(false);
+    download().then(() => {
+      setDownloadState(true);
+    });
+  };
   return (
     <>
       <div className={styles.container}>
@@ -131,7 +149,15 @@ function ViewStory() {
                 }
               }}
             />
-            <img src={shareIcon} alt="share icon" />
+            <img
+              src={shareIcon}
+              alt="share icon"
+              onClick={() => {
+                navigator.clipboard.writeText(location.href).then(() => {
+                  toast.success("Link copied to clipboard!");
+                });
+              }}
+            />
           </div>
 
           {/* Slide */}
@@ -183,6 +209,19 @@ function ViewStory() {
                     />
                   )}
 
+                  {downloadState ? (
+                    <img
+                      src={downloadIcon}
+                      alt="download"
+                      style={{
+                        width: "16px",
+                      }}
+                      onClick={handleDownload}
+                    />
+                  ) : (
+                    <div className="loader"></div>
+                  )}
+
                   <div className={styles.heart}>
                     {likeState[0] != -1 &&
                     likeState.includes(storyInfo.slides[visitIndex]._id) ? (
@@ -205,15 +244,17 @@ function ViewStory() {
                       <img
                         src={whiteHeart}
                         onClick={() => {
-                          setLikeState([
-                            ...likeState,
-                            storyInfo.slides[visitIndex]._id,
-                          ]);
-                          setLike({
-                            ...like,
-                            [storyInfo.slides[visitIndex]._id]:
-                              like[storyInfo.slides[visitIndex]._id] + 1,
-                          });
+                          if (localStorage.getItem("token")) {
+                            setLikeState([
+                              ...likeState,
+                              storyInfo.slides[visitIndex]._id,
+                            ]);
+                            setLike({
+                              ...like,
+                              [storyInfo.slides[visitIndex]._id]:
+                                like[storyInfo.slides[visitIndex]._id] + 1,
+                            });
+                          }
                         }}
                         alt=""
                       />

@@ -58,7 +58,7 @@ router.get("/stories/:filter", async (req, res, next) => {
   try {
     const filter = req.params.filter;
     const filterArr = filter.split(",");
-    const categories = ["medical", "fruits", "world", "india"];
+    const categories = ["medical", "fruits", "world", "india", "education"];
 
     let result = {};
     async function getData(catArray) {
@@ -73,6 +73,38 @@ router.get("/stories/:filter", async (req, res, next) => {
       await getData(filterArr);
     }
     return res.json(result);
+  } catch (error) {
+    next(error);
+  }
+});
+
+// Editing the stories.
+router.patch("/edit/:storyId", authMiddleware, async (req, res, next) => {
+  try {
+    const storyId = req.params.storyId;
+    const { slides } = req.body;
+    await Stories.findByIdAndUpdate(
+      storyId,
+      {
+        slides: [...slides],
+      },
+      {
+        new: true,
+      }
+    );
+    res.json({ msg: "Updated Sucessfully!!!" });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// Get story by story ID.
+router.get("/single/:storyId", authMiddleware, async (req, res, next) => {
+  try {
+    const storyId = req.params.storyId;
+    const userId = req.body.userId;
+    const story = await Stories.findOne({ _id: storyId, userId });
+    return res.json(story);
   } catch (error) {
     next(error);
   }

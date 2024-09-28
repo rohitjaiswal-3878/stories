@@ -8,7 +8,6 @@ import { createStory } from "../../apis/story";
 
 function CreateStory({ setCurrentState }) {
   const navigate = useNavigate();
-  const getData = useOutletContext(); // Gets the latest story after story creation.
   const [error, setError] = useState(""); // Store error
   const [slides, setSlides] = useState([
     {
@@ -218,6 +217,7 @@ function CreateStory({ setCurrentState }) {
                   <option value="fruits">Fruits</option>
                   <option value="world">World</option>
                   <option value="india">India</option>
+                  <option value="education">Education</option>
                 </select>
                 <span>This field will be common for all slides</span>
               </div>

@@ -24,7 +24,7 @@ const setBookAndLike = async (storyId, bookmark, like) => {
 const getBookandLike = async (storyId) => {
   try {
     const response = await axios.get(
-      `${import.meta.env.VITE_APP_BACKEND}/data/${storyId}`,
+      `${import.meta.env.VITE_APP_BACKEND}/data/fetch/${storyId}`,
       {
         headers: {
           "x-token": localStorage.getItem("token"),
@@ -50,4 +50,23 @@ const getLike = async (storyId) => {
   }
 };
 
-export { setBookAndLike, getBookandLike, getLike };
+const getBookmark = async () => {
+  try {
+    const response = await axios.get(
+      `
+      ${import.meta.env.VITE_APP_BACKEND}/data/bookmark
+      `,
+      {
+        headers: {
+          "x-token": localStorage.getItem("token"),
+        },
+      }
+    );
+
+    return response;
+  } catch (error) {
+    return error.response;
+  }
+};
+
+export { setBookAndLike, getBookandLike, getLike, getBookmark };

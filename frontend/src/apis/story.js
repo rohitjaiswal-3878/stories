@@ -77,9 +77,53 @@ const getStoriesByCategory = async (selCat) => {
   }
 };
 
+// Get story by story ID.
+const getStory = async (storyId) => {
+  try {
+    const response = await axios.get(
+      `
+      ${import.meta.env.VITE_APP_BACKEND}/story/single/${storyId}
+      `,
+      {
+        headers: {
+          "x-token": localStorage.getItem("token"),
+        },
+      }
+    );
+
+    return response;
+  } catch (error) {
+    return error.response;
+  }
+};
+
+const updateStory = async (storyId, slides) => {
+  try {
+    const response = await axios.patch(
+      `
+      ${import.meta.env.VITE_APP_BACKEND}/story/edit/${storyId}
+      `,
+      {
+        slides,
+      },
+      {
+        headers: {
+          "x-token": localStorage.getItem("token"),
+        },
+      }
+    );
+
+    return response;
+  } catch (error) {
+    return error.response;
+  }
+};
+
 export {
   createStory,
   getAllStories,
   getStoryByIdAndSlide,
   getStoriesByCategory,
+  getStory,
+  updateStory,
 };

@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const mongoose = require("mongoose");
 const Data = require("../models/Data");
 const Stories = require("../models/Stories");
 const { authMiddleware } = require("../middlewares/auth");
@@ -34,7 +35,7 @@ router.put("/create/:storyId", authMiddleware, async (req, res, next) => {
   }
 });
 
-router.get("/:storyId", authMiddleware, async (req, res, next) => {
+router.get("/fetch/:storyId", authMiddleware, async (req, res, next) => {
   try {
     const userId = req.body.userId;
     const storyId = req.params.storyId;
@@ -80,6 +81,56 @@ router.get("/like/:storyId", async (req, res, next) => {
       result[slide._id] = temp[slide._id] || 0;
     });
 
+    return res.json(result);
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.get("/bookmark", authMiddleware, async (req, res, next) => {
+  try {
+    const userId = req.body.userId;
+    const data = await Data.aggregate([
+      {
+        $match: {
+          userId: userId,
+        },
+      },
+      {
+        $unwind: {
+          path: "$bookmark",
+        },
+      },
+      {
+        $project: {
+          storyId: 1,
+          bookmark: 1,
+          _id: 0,
+        },
+      },
+    ]);
+
+    let result = [];
+    async function getSlide() {
+      for (const e of data) {
+        const temp = await Stories.aggregate([
+          { $match: { _id: new mongoose.Types.ObjectId(e.storyId) } },
+          { $unwind: "$slides" },
+          {
+            $match: {
+              "slides._id": new mongoose.Types.ObjectId(e.bookmark),
+            },
+          },
+        ]);
+
+        let a = {
+          storyId: temp[0]._id,
+          slide: temp[0].slides,
+        };
+        result.push(a);
+      }
+    }
+    await getSlide();
     return res.json(result);
   } catch (error) {
     next(error);
