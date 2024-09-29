@@ -68,3 +68,20 @@ border-radius: 50%;
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
+
+@media only screen and (max-width : 769px) {
+  #signup-tool-tip {
+    position: absolute;
+    right: 0px;
+    top: 5px;
+  }
+  .tooltip .tooltiptext {
+    left: -48px;
+    bottom: 110%;
+  }
+  
+  .tooltip .tooltiptext::after {
+    left: 92%;
+  }
+  
+}

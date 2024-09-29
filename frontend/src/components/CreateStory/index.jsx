@@ -7,6 +7,7 @@ import toast from "react-hot-toast";
 import { createStory } from "../../apis/story";
 
 function CreateStory({ setCurrentState }) {
+  const [width, setWidth] = useState(window.innerWidth);
   const navigate = useNavigate();
   const [error, setError] = useState(""); // Store error
   const [slides, setSlides] = useState([
@@ -31,6 +32,12 @@ function CreateStory({ setCurrentState }) {
   ]); // Store slides state.
   const [selSlide, setSelSlide] = useState(0); // Keep track of selected slide.
   const [loader, setLoader] = useState(false); // Store state of loader.
+
+  useEffect(() => {
+    const handleResize = () => setWidth(window.innerWidth);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   // Checks for token.
   useEffect(() => {
@@ -138,7 +145,9 @@ function CreateStory({ setCurrentState }) {
     <MyModal>
       <div className={styles.container}>
         <span className={styles.heading}>Add upto 6 slides</span>
-
+        {width < 769 && (
+          <h3 className={styles.respHeading}>Add story to feed</h3>
+        )}
         {/* All slides */}
         <div className={styles.slides}>
           <ul>
@@ -181,6 +190,7 @@ function CreateStory({ setCurrentState }) {
                 name="heading"
                 onChange={handleInput}
                 value={slides[selSlide].heading}
+                autoComplete="off"
               />
             </div>
             <div>
@@ -190,6 +200,7 @@ function CreateStory({ setCurrentState }) {
                 placeholder="Story Description"
                 onChange={handleInput}
                 value={slides[selSlide].description}
+                autoComplete="off"
               ></textarea>
             </div>
             <div>
@@ -200,6 +211,7 @@ function CreateStory({ setCurrentState }) {
                 name="imageURL"
                 onChange={handleInput}
                 value={slides[selSlide].imageURL}
+                autoComplete="off"
               />
             </div>
             <div className={styles.category}>

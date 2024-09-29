@@ -18,8 +18,11 @@ import Register from "../../components/Register";
 import CreateStory from "../../components/CreateStory";
 
 function Homepage() {
+  const [width, setWidth] = useState(window.innerWidth);
+
   const navigate = useNavigate();
   const location = useLocation(); // Gets the current path.
+
   const [token, setToken] = useState(""); // Store the token.
   const [menu, setMenu] = useState(); // Store the state of hamburger.
   const [yourStories, setYourStories] = useState([]); // Store your stories.
@@ -53,11 +56,19 @@ function Homepage() {
   const [stories, setStories] = useState({}); // Store stories of all categories.
   const [selCat, setSelCat] = useState(["all"]); // Store state of selected category.
 
+  const [toggleMenu, setToggleMenu] = useState(false);
+
   const [currentState, setCurrentState] = useState({
     login: false,
     register: false,
     create: false,
   });
+
+  useEffect(() => {
+    const handleResize = () => setWidth(window.innerWidth);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   // Checks for token.
   useEffect(() => {
@@ -115,60 +126,103 @@ function Homepage() {
     <div className={styles.homepage}>
       {/* Navbar of homepage. */}
       <div className={styles.navbar}>
-        <div className={styles.buttons}>
+        {width < 769 && (
+          <img
+            src={hamburger}
+            alt="hamburger"
+            className={styles.authHamburger}
+            onClick={() => {
+              setToggleMenu(!toggleMenu);
+            }}
+          />
+        )}
+        <div
+          className={styles.buttons}
+          style={{
+            display: width < 789 ? (toggleMenu ? "" : "none") : "",
+          }}
+        >
+          {width < 769 && (
+            <span
+              className={styles.crossIcon}
+              onClick={() => {
+                setToggleMenu(false);
+              }}
+            >
+              x
+            </span>
+          )}
+
+          {width < 769 && token && (
+            <button
+              onClick={() => {
+                localStorage.removeItem("token");
+                setYourStories([]);
+                setToken("");
+                toast.success("Logged out successfully!");
+              }}
+            >
+              Logout
+            </button>
+          )}
           {!token ? (
             <div
-              onClick={() =>
+              onClick={() => {
                 setCurrentState({
                   login: false,
                   register: true,
                   create: false,
-                })
-              }
+                });
+                setToggleMenu(false);
+              }}
             >
               Register Now
             </div>
           ) : (
-            <div
-              style={{ fontSize: "11px" }}
-              onClick={() => {
-                navigate("/bookmark");
-              }}
-            >
-              <img
-                src={bookmarkIcon}
-                alt=""
-                style={{
-                  width: "13px",
-                  objectFit: "contain",
-                  marginRight: "5px",
+            <>
+              <div
+                style={{ fontSize: "11px" }}
+                onClick={() => {
+                  navigate("/bookmark");
                 }}
-              />
-              Bookmarks
-            </div>
+              >
+                <img
+                  src={bookmarkIcon}
+                  alt=""
+                  style={{
+                    width: "13px",
+                    objectFit: "contain",
+                    marginRight: "5px",
+                  }}
+                />
+                Bookmarks
+              </div>
+            </>
           )}
           {!token ? (
             <div
               className={styles.green}
-              onClick={() =>
+              onClick={() => {
+                setToggleMenu(false);
                 setCurrentState({
                   login: true,
                   register: false,
                   create: false,
-                })
-              }
+                });
+              }}
             >
               Sign In
             </div>
           ) : (
             <div
-              onClick={() =>
+              onClick={() => {
+                setToggleMenu(false);
                 setCurrentState({
                   login: false,
                   register: false,
                   create: true,
-                })
-              }
+                });
+              }}
             >
               Add story
             </div>
@@ -177,6 +231,11 @@ function Homepage() {
           {token && (
             <div className={styles.profileImg}>
               <img src={profileImg} alt="" />
+              {width < 769 && (
+                <span style={{ color: "black" }}>
+                  {localStorage.getItem("username")}
+                </span>
+              )}
             </div>
           )}
 
@@ -262,7 +321,7 @@ function Homepage() {
 
       <Toaster />
       {/* Login, register, create story, view story */}
-      <Outlet context={{ getData }} />
+      <Outlet context={{ getData, setCurrentState }} />
 
       {currentState.login && <Login setCurrentState={setCurrentState} />}
       {currentState.register && <Register setCurrentState={setCurrentState} />}

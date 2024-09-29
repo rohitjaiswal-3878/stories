@@ -30,6 +30,9 @@ function CommonAuthForm({ children }) {
               onChange={handleInput}
               placeholder="Enter username"
               required
+              style={{
+                width: children.props.children == "Register" ? "92%" : "",
+              }}
             />
             {children.props.children == "Register" && (
               <div className="tooltip" id="signup-tool-tip">
@@ -71,6 +74,9 @@ function CommonAuthForm({ children }) {
               name="password"
               placeholder="Enter password"
               id={styles.password}
+              style={{
+                width: children.props.children == "Register" ? "92%" : "",
+              }}
             />
             <img
               src={eyeIcon}

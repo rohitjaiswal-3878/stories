@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const Stories = require("../models/Stories");
+const Data = require("../models/Data");
 const User = require("../models/User");
 const { authMiddleware } = require("../middlewares/auth");
 
@@ -83,7 +84,9 @@ router.patch("/edit/:storyId", authMiddleware, async (req, res, next) => {
   try {
     const storyId = req.params.storyId;
     const { slides } = req.body;
-    await Stories.findByIdAndUpdate(
+
+    const bookmarks = await Data.find({ storyId });
+    const updateStory = await Stories.findByIdAndUpdate(
       storyId,
       {
         slides: [...slides],
@@ -92,6 +95,15 @@ router.patch("/edit/:storyId", authMiddleware, async (req, res, next) => {
         new: true,
       }
     );
+
+    const slidesId = updateStory.slides.map((slide) => slide._id.toString());
+
+    for (const element of bookmarks) {
+      const temp = element.bookmark.filter((id) => slidesId.includes(id));
+      await Data.findByIdAndUpdate(element._id, {
+        bookmark: temp,
+      });
+    }
     res.json({ msg: "Updated Sucessfully!!!" });
   } catch (error) {
     next(error);

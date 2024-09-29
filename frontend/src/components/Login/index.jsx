@@ -46,7 +46,11 @@ function Login({ setCurrentState }) {
           login: false,
           register: false,
           create: false,
+          edit: false,
         });
+        if (localStorage.getItem("slideURL")) {
+          navigate(localStorage.getItem("slideURL"));
+        }
       } else if (res.status == "400") {
         toast.error(res.data.msg);
         setLoader(false);
@@ -63,6 +67,7 @@ function Login({ setCurrentState }) {
       login: false,
       register: false,
       create: false,
+      edit: false,
     });
   };
   return (

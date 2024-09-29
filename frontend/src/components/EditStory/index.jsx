@@ -97,9 +97,21 @@ function EditStory() {
     }
   };
 
+  // Handle close slide functionality.
+  const handleCloseSlide = (e, index) => {
+    e.stopPropagation();
+    const newSlides = slides.filter((e, i) => i != index);
+    if (selSlide == index) {
+      setSelSlide(index - 1);
+    }
+    setSlides(newSlides);
+  };
+
   return (
     <MyModal>
       <div className={styles.container}>
+        <span className={styles.heading}>Add upto 6 slides</span>
+
         {/* All slides */}
         <div className={styles.slides}>
           <ul>
@@ -114,6 +126,14 @@ function EditStory() {
                   onClick={() => setSelSlide(index)}
                 >
                   <span>Slide {index + 1}</span>
+                  {index > 2 && (
+                    <span
+                      className={styles.closeSlide}
+                      onClick={(e) => handleCloseSlide(e, index)}
+                    >
+                      x
+                    </span>
+                  )}
                 </li>
               ))}
           </ul>

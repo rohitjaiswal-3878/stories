@@ -18,9 +18,10 @@ import { useRef } from "react";
 import bookmarkBlue from "../../assets/bookmark-blue.png";
 import { getBookandLike, getLike, setBookAndLike } from "../../apis/data";
 import downloadIcon from "../../assets/download.png";
-import downloadDone from "../../assets/download_done.png";
+import { useOutletContext } from "react-router-dom";
 
 function ViewStory() {
+  const { setCurrentState } = useOutletContext();
   const navigate = useNavigate();
   const { id, slideId } = useParams(); // Story id and slide id.
   const [storyInfo, setStoryInfo] = useState({}); // Stories and visit index.
@@ -130,6 +131,9 @@ function ViewStory() {
               alt="cross icon"
               className={styles.cross}
               onClick={() => {
+                if (localStorage.getItem("slideURL")) {
+                  localStorage.removeItem("slideURL");
+                }
                 if (localStorage.getItem("token")) {
                   setBookAndLike(id, bookmarkState, likeState)
                     .then((res) => {
@@ -209,17 +213,21 @@ function ViewStory() {
                     />
                   )}
 
-                  {downloadState ? (
-                    <img
-                      src={downloadIcon}
-                      alt="download"
-                      style={{
-                        width: "16px",
-                      }}
-                      onClick={handleDownload}
-                    />
+                  {localStorage.getItem("token") ? (
+                    downloadState ? (
+                      <img
+                        src={downloadIcon}
+                        alt="download"
+                        style={{
+                          width: "16px",
+                        }}
+                        onClick={handleDownload}
+                      />
+                    ) : (
+                      <div className="loader"></div>
+                    )
                   ) : (
-                    <div className="loader"></div>
+                    ""
                   )}
 
                   <div className={styles.heart}>
@@ -254,6 +262,18 @@ function ViewStory() {
                               [storyInfo.slides[visitIndex]._id]:
                                 like[storyInfo.slides[visitIndex]._id] + 1,
                             });
+                          } else {
+                            localStorage.setItem(
+                              "slideURL",
+                              `/view/${id}/slide/${slideId}`
+                            );
+                            setCurrentState({
+                              login: true,
+                              register: false,
+                              create: false,
+                              edit: false,
+                            });
+                            navigate("/");
                           }
                         }}
                         alt=""
