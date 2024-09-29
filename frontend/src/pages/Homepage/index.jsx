@@ -57,6 +57,7 @@ function Homepage() {
   const [selCat, setSelCat] = useState(["all"]); // Store state of selected category.
 
   const [toggleMenu, setToggleMenu] = useState(false);
+  const [toggleYourStory, setToggleYourStory] = useState(false);
 
   const [currentState, setCurrentState] = useState({
     login: false,
@@ -105,6 +106,7 @@ function Homepage() {
 
   // Handle category selection part.
   const handleSelCat = (category) => {
+    setSeeMore("");
     if (category == "all") {
       setSelCat(["all"]);
     } else {
@@ -228,6 +230,17 @@ function Homepage() {
             </div>
           )}
 
+          {width < 769 && token && (
+            <button
+              onClick={() => {
+                setToggleYourStory(!toggleYourStory);
+                setToggleMenu(false);
+              }}
+            >
+              Your Profile
+            </button>
+          )}
+
           {token && (
             <div className={styles.profileImg}>
               <img src={profileImg} alt="" />
@@ -268,56 +281,85 @@ function Homepage() {
       </div>
 
       {/* Stories section. */}
-      <div className={styles.stories}>
-        {/* All categories. */}
-        <ul className={styles.categories}>
-          {categories.map((category, index) => (
-            <li
-              key={index}
-              onClick={() => handleSelCat(category.title.toLocaleLowerCase())}
-              className={
-                selCat.includes(category.title.toLocaleLowerCase())
-                  ? styles.selCategory
-                  : ""
-              }
-            >
-              <img src={category.image} alt="" />
-              <span>{category.title}</span>
-            </li>
-          ))}
-        </ul>
-
-        {/* Your story section. */}
-        {yourStories.length != 0 && (seeMore == "your" || seeMore == "") && (
-          <Stories
-            stories={yourStories}
-            seeMore={seeMore}
-            section={"your"}
-            setSeeMore={setSeeMore}
-            userId={yourStories[0].userId}
-          >
-            <span>Your Stories</span>
-          </Stories>
-        )}
-
-        {/* Other stories section. */}
-        {Object.keys(stories).map((cat, i) => {
-          if (seeMore == cat || seeMore == "") {
-            return (
-              <Stories
-                seeMore={seeMore}
-                setSeeMore={setSeeMore}
-                key={i}
-                section={cat}
-                stories={stories[cat]}
-                userId={yourStories.length != 0 ? yourStories[0].userId : ""}
+      {!toggleYourStory || width > 769 ? (
+        <div className={styles.stories}>
+          {/* All categories. */}
+          <ul className={styles.categories}>
+            {categories.map((category, index) => (
+              <li
+                key={index}
+                onClick={() => handleSelCat(category.title.toLocaleLowerCase())}
+                className={
+                  selCat.includes(category.title.toLocaleLowerCase())
+                    ? styles.selCategory
+                    : ""
+                }
               >
-                <span>Top Stories About {cat}</span>
+                <img src={category.image} alt="" />
+                <span>{category.title}</span>
+              </li>
+            ))}
+          </ul>
+
+          {/* Your story section. */}
+
+          {width > 768 &&
+            yourStories.length != 0 &&
+            (seeMore == "your" || seeMore == "") && (
+              <Stories
+                stories={yourStories}
+                seeMore={seeMore}
+                section={"your"}
+                setSeeMore={setSeeMore}
+                userId={yourStories[0].userId}
+              >
+                <span>Your Stories</span>
               </Stories>
-            );
-          }
-        })}
-      </div>
+            )}
+
+          {/* Other stories section. */}
+          {Object.keys(stories).map((cat, i) => {
+            if (seeMore == cat || seeMore == "") {
+              return (
+                <Stories
+                  seeMore={seeMore}
+                  setSeeMore={setSeeMore}
+                  key={i}
+                  section={cat}
+                  stories={stories[cat]}
+                  userId={yourStories.length != 0 ? yourStories[0].userId : ""}
+                >
+                  <span>Top Stories About {cat}</span>
+                </Stories>
+              );
+            }
+          })}
+        </div>
+      ) : (
+        yourStories.length != 0 &&
+        (seeMore == "your" || seeMore == "") && (
+          <>
+            <button
+              onClick={() => {
+                setToggleYourStory(false);
+                setSeeMore("");
+              }}
+              className={styles.goback}
+            >
+              Go back
+            </button>
+            <Stories
+              stories={yourStories}
+              seeMore={seeMore}
+              section={"your"}
+              setSeeMore={setSeeMore}
+              userId={yourStories[0].userId}
+            >
+              <span>Your Stories</span>
+            </Stories>
+          </>
+        )
+      )}
 
       <Toaster />
       {/* Login, register, create story, view story */}

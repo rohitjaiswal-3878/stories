@@ -45,3 +45,14 @@
     }
 
 }
+
+@media only screen and (max-width: 769px){
+    .topStories {
+    
+        .allStories {
+            display: flex;
+            flex-direction: column;
+        }
+    
+    }
+}

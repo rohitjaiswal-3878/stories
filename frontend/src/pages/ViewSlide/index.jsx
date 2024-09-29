@@ -21,6 +21,8 @@ import downloadIcon from "../../assets/download.png";
 import { useOutletContext } from "react-router-dom";
 
 function ViewStory() {
+  const [width, setWidth] = useState(window.innerWidth);
+
   const { setCurrentState } = useOutletContext();
   const navigate = useNavigate();
   const { id, slideId } = useParams(); // Story id and slide id.
@@ -31,6 +33,12 @@ function ViewStory() {
   const [likeState, setLikeState] = useState([-1]);
   const [like, setLike] = useState(null);
   const [downloadState, setDownloadState] = useState(true);
+
+  useEffect(() => {
+    const handleResize = () => setWidth(window.innerWidth);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   // loads story.
   useEffect(() => {
@@ -97,13 +105,19 @@ function ViewStory() {
         {/* Previous slide. */}
         <div
           className={styles.control}
-          onClick={() => {
+          onClick={(e) => {
             if (visitIndex >= 1) {
               navigate(
                 `/view/${id}/slide/${storyInfo.slides[visitIndex - 1]._id}`
               );
               setVisitIndex(visitIndex - 1);
             }
+            if (width < 769) {
+              e.stopPropagation();
+            }
+          }}
+          style={{
+            left: width < 769 ? "0px" : "",
           }}
         >
           <img src={lessIcon} alt="" />
@@ -295,13 +309,19 @@ function ViewStory() {
         {/* Next slide. */}
         <div
           className={styles.control}
-          onClick={() => {
+          onClick={(e) => {
             if (visitIndex < storyInfo.slides.length - 1) {
               navigate(
                 `/view/${id}/slide/${storyInfo.slides[visitIndex + 1]._id}`
               );
               setVisitIndex(visitIndex + 1);
             }
+            if (width < 769) {
+              e.stopPropagation();
+            }
+          }}
+          style={{
+            right: width < 769 ? "0px" : "",
           }}
         >
           <img src={greatIcon} alt="" />
