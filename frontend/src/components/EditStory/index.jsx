@@ -16,6 +16,7 @@ function EditStory() {
   const [slides, setSlides] = useState(-1); // Store slides state.
   const [selSlide, setSelSlide] = useState(0); // Keep track of selected slide.
   const [loader, setLoader] = useState(false); // Store state of loader.
+  const [videoError, setVideoError] = useState([]);
 
   useEffect(() => {
     getStory(storyId).then((res) => {
@@ -44,10 +45,62 @@ function EditStory() {
     return b;
   }
 
+  // Validate image url.
+  function validateImageUrl(url, callback) {
+    const img = new Image();
+    img.src = url;
+
+    img.onload = function () {
+      callback(true);
+    };
+
+    img.onerror = function () {
+      callback(false);
+    };
+  }
+
+  // Validate video duration.
+  function validateVideoUrl(url, callback) {
+    const video = document.createElement("video");
+
+    video.src = url;
+    video.preload = "metadata";
+
+    video.onloadedmetadata = function () {
+      const durationInSeconds = video.duration;
+      if (durationInSeconds <= 15) {
+        callback(true, "");
+      } else {
+        callback(false, "Video duration should be less than 15sec");
+      }
+    };
+    video.onerror = function () {
+      callback(false, "Invalid URL");
+    };
+  }
+
   // Sync react state with form state.
   const handleInput = (e) => {
     const name = e.target.name;
     const value = e.target.value;
+    if (name == "imageURL") {
+      validateImageUrl(value, (imageValid) => {
+        if (!imageValid) {
+          validateVideoUrl(value, (valid, msg) => {
+            if (valid) {
+              videoError[selSlide] = "";
+            } else {
+              videoError[selSlide] = msg + " in slide " + (selSlide + 1);
+            }
+
+            setVideoError(videoError);
+          });
+        } else {
+          videoError[selSlide] = "";
+          setVideoError(videoError);
+        }
+      });
+    }
     if (name == "category") {
       slides.map((slide, index) => (slide.category = value));
       setSlides([...slides]);
@@ -75,9 +128,17 @@ function EditStory() {
       }
     });
 
-    if (err == 0) {
+    let urlError = 0;
+    videoError.forEach((ele) => {
+      if (ele != "") {
+        urlError++;
+      }
+    });
+
+    if (err == 0 && urlError == 0) {
       setLoader(true);
       setError("");
+      setVideoError([]);
       updateStory(storyId, slides).then((res) => {
         if (res.status == 200) {
           setLoader(false);
@@ -90,9 +151,23 @@ function EditStory() {
         }
       });
     } else {
-      const msg = `Please fill all details in slide number ${convertArrayToString(
-        slideNo
-      )}`;
+      let msg = "";
+      if (slideNo.length != 0) {
+        msg = `Please fill all details in slide number ${convertArrayToString(
+          slideNo
+        )}`;
+      } else {
+        videoError.forEach((ele, index) => {
+          if (ele != "") {
+            if (index == videoError.length - 1) {
+              msg += ele + ".";
+            } else {
+              msg += ele + ", ";
+            }
+          }
+        });
+      }
+
       setError(msg);
     }
   };

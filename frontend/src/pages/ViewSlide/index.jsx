@@ -19,6 +19,8 @@ import bookmarkBlue from "../../assets/bookmark-blue.png";
 import { getBookandLike, getLike, setBookAndLike } from "../../apis/data";
 import downloadIcon from "../../assets/download.png";
 import { useOutletContext } from "react-router-dom";
+import muteIcon from "../../assets/mute.png";
+import soundIcon from "../../assets/sound-on.png";
 
 function ViewStory() {
   const [width, setWidth] = useState(window.innerWidth);
@@ -33,6 +35,15 @@ function ViewStory() {
   const [likeState, setLikeState] = useState([-1]);
   const [like, setLike] = useState(null);
   const [downloadState, setDownloadState] = useState(true);
+
+  // State to manage if the video is muted or not
+  const [isMuted, setIsMuted] = useState(true);
+  const videoRef = useRef(null);
+
+  // Function to toggle mute/unmute
+  const toggleMute = () => {
+    setIsMuted(!isMuted);
+  };
 
   useEffect(() => {
     const handleResize = () => setWidth(window.innerWidth);
@@ -167,6 +178,9 @@ function ViewStory() {
                 }
               }}
             />
+            <div onClick={toggleMute}>
+              <img src={!isMuted ? soundIcon : muteIcon} alt="" />
+            </div>
             <img
               src={shareIcon}
               alt="share icon"
@@ -189,7 +203,8 @@ function ViewStory() {
                 <video
                   src={storyInfo.slides[visitIndex].imageURL}
                   autoPlay
-                  muted
+                  muted={isMuted}
+                  ref={videoRef}
                 ></video>
               ) : (
                 <img src={storyInfo.slides[visitIndex].imageURL} alt="" />
