@@ -5,6 +5,7 @@ import { useNavigate, useOutletContext } from "react-router-dom";
 import crossIcon from "../../assets/cross.jpg";
 import toast from "react-hot-toast";
 import { createStory } from "../../apis/story";
+import { useRef } from "react";
 
 function CreateStory({ setCurrentState }) {
   const [width, setWidth] = useState(window.innerWidth);
@@ -32,7 +33,18 @@ function CreateStory({ setCurrentState }) {
   ]); // Store slides state.
   const [selSlide, setSelSlide] = useState(0); // Keep track of selected slide.
   const [loader, setLoader] = useState(false); // Store state of loader.
-  const [videoError, setVideoError] = useState([]);
+  const [videoError, setVideoError] = useState([
+    {
+      errorCode: -1,
+    },
+    {
+      errorCode: -1,
+    },
+    {
+      errorCode: -1,
+    },
+  ]);
+  const [urlState, setUrlState] = useState(false);
 
   useEffect(() => {
     const handleResize = () => setWidth(window.innerWidth);
@@ -57,6 +69,10 @@ function CreateStory({ setCurrentState }) {
         category: slides[0].category,
       });
       setSlides([...slides]);
+      videoError.push({
+        errorCode: -1,
+      });
+      setVideoError([...videoError]);
     }
   };
 
@@ -67,7 +83,12 @@ function CreateStory({ setCurrentState }) {
     if (selSlide == index) {
       setSelSlide(index - 1);
     }
+    if (selSlide == slides.length - 1) {
+      setSelSlide(selSlide - 1);
+    }
     setSlides(newSlides);
+    const newVideoError = videoError.filter((e, i) => i != index);
+    setVideoError(newVideoError);
   };
 
   // Converts number array to comman separated string.
@@ -89,64 +110,75 @@ function CreateStory({ setCurrentState }) {
 
   // Validate image url.
   function validateImageUrl(url, callback) {
-    const img = new Image();
-    img.src = url;
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.src = url;
 
-    img.onload = function () {
-      callback(true);
-    };
+      img.onload = function () {
+        resolve(true);
+      };
 
-    img.onerror = function () {
-      callback(false);
-    };
+      img.onerror = function () {
+        resolve(false);
+      };
+    });
   }
 
   // Validate video duration.
-  function validateVideoUrl(url, callback) {
-    const video = document.createElement("video");
+  function validateVideoUrl(url) {
+    return new Promise((resolve, reject) => {
+      const video = document.createElement("video");
 
-    video.src = url;
-    video.preload = "metadata";
+      video.src = url;
+      video.preload = "metadata";
 
-    video.onloadedmetadata = function () {
-      const durationInSeconds = video.duration;
-      if (durationInSeconds <= 15) {
-        callback(true, "");
-      } else {
-        callback(false, "Video duration should be less than 15sec");
-      }
-    };
-    video.onerror = function () {
-      callback(false, "Invalid URL");
-    };
+      video.onloadedmetadata = function () {
+        const durationInSeconds = video.duration;
+        if (durationInSeconds <= 15) {
+          resolve({ valid: true, msg: "" });
+        } else {
+          resolve({
+            valid: false,
+            msg: "Video duration should be less than 15sec",
+          });
+        }
+      };
+      video.onerror = function () {
+        resolve({ valid: false, msg: "Invalid URL" });
+      };
+    });
   }
+
+  let interval = useRef();
   // Sync react state with form state.
-  const handleInput = (e) => {
+  const handleInput = async (e) => {
     const name = e.target.name;
     const value = e.target.value;
-    if (name == "imageURL") {
-      validateImageUrl(value, (imageValid) => {
-        if (!imageValid) {
-          validateVideoUrl(value, (valid, msg) => {
-            if (valid) {
-              videoError[selSlide] = "";
-            } else {
-              videoError[selSlide] = msg + " in slide " + (selSlide + 1);
-            }
-            setVideoError(videoError);
-          });
-        } else {
-          videoError[selSlide] = "";
-          setVideoError(videoError);
-        }
-      });
-    }
     if (name == "category") {
       slides.map((slide, index) => (slide.category = value));
       setSlides([...slides]);
     } else {
       slides[selSlide][name] = value;
       setSlides([...slides]);
+    }
+    if (name == "imageURL") {
+      clearTimeout(interval.current);
+      interval.current = setTimeout(async () => {
+        setUrlState(true);
+        const image = await validateImageUrl(value);
+        if (!image) {
+          const video = await validateVideoUrl(value);
+          if (video.valid) {
+            videoError[selSlide].errorCode = -1;
+          } else {
+            videoError[selSlide].errorCode = video.msg;
+          }
+        } else {
+          videoError[selSlide].errorCode = -1;
+          setVideoError(videoError);
+        }
+        setUrlState(false);
+      }, 400);
     }
   };
 
@@ -170,7 +202,7 @@ function CreateStory({ setCurrentState }) {
 
     let urlError = 0;
     videoError.forEach((ele) => {
-      if (ele != "") {
+      if (ele.errorCode != -1) {
         urlError++;
       }
     });
@@ -200,12 +232,8 @@ function CreateStory({ setCurrentState }) {
         )}`;
       } else {
         videoError.forEach((ele, index) => {
-          if (ele != "") {
-            if (index == videoError.length - 1) {
-              msg += "and " + ele + ".";
-            } else {
-              msg += ele + ", ";
-            }
+          if (ele.errorCode != -1) {
+            msg += ele.errorCode + " in slide " + (index + 1) + ", ";
           }
         });
       }
@@ -276,7 +304,7 @@ function CreateStory({ setCurrentState }) {
                 autoComplete="off"
               ></textarea>
             </div>
-            <div>
+            <div className={styles.imageURL}>
               <label>Image/video:</label>
               <input
                 type="text"
@@ -285,8 +313,15 @@ function CreateStory({ setCurrentState }) {
                 onChange={handleInput}
                 value={slides[selSlide].imageURL}
                 autoComplete="off"
+                disabled={urlState}
               />
+              {urlState && (
+                <div id={styles.loaderDiv}>
+                  <div id={styles.loader}></div>
+                </div>
+              )}
             </div>
+
             <div className={styles.category}>
               <label>Category:</label>
               <div>
@@ -337,7 +372,7 @@ function CreateStory({ setCurrentState }) {
           <button
             style={{ backgroundColor: "#FF7373" }}
             onClick={handlePost}
-            disabled={loader}
+            disabled={loader || urlState}
           >
             {loader ? <div className="loader"></div> : "Post"}
           </button>
