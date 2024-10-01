@@ -167,10 +167,26 @@
         .selCategory {
             border:0.15em solid #00ACD2;
         }
+        
 
     }
+    
+}
+::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
 }
 
+  ::-webkit-scrollbar-track {
+    border-radius: 10px;
+    background: #f1f1f1;
+  }
+
+  /* Handle */
+::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    background: #b7b7b7; 
+  }
 @media only screen and (max-width:769px) {
     .navbar {
         height: 45px;
@@ -287,5 +303,9 @@
         padding: 5px 10px;
         border-radius: 20px;
         cursor: pointer;
+    }
+    ::-webkit-scrollbar {
+        width: 2px;
+        height: 2px;
     }
 }
