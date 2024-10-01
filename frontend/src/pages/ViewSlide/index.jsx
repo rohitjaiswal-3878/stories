@@ -203,9 +203,11 @@ function ViewStory() {
               src={shareIcon}
               alt="share icon"
               onClick={() => {
-                navigator.clipboard.writeText(location.href).then(() => {
-                  toast.success("Link copied to clipboard!");
-                });
+                window.navigator.clipboard
+                  .writeText(window.location.href)
+                  .then(() => {
+                    toast.success("Link copied to clipboard!");
+                  });
               }}
             />
           </div>
