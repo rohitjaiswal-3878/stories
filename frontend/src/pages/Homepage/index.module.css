@@ -188,6 +188,10 @@
     background: #b7b7b7; 
   }
 @media only screen and (max-width:769px) {
+    .homepage {
+        width: 100svw;
+        height: 100svh;
+    }
     .navbar {
         height: 45px;
         display: flex;
