@@ -87,7 +87,6 @@ function Homepage() {
 
   // Gets your story and all other stories created by other user.
   function getData() {
-    console.log("yes");
     if (localStorage.getItem("token")) {
       getAllStories()
         .then((res) => {

@@ -4,6 +4,7 @@ import Homepage from "./pages/Homepage";
 import ViewStory from "./pages/ViewSlide";
 import Bookmark from "./pages/Bookmark";
 import EditStory from "./components/EditStory";
+import Error from "./pages/Error";
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
             <Route path="edit/:storyId" element={<EditStory />} />
           </Route>
           <Route path="/bookmark" element={<Bookmark />} />
+          <Route path="*" element={<Error />} />
         </Routes>
       </div>
     </BrowserRouter>
