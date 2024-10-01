@@ -12,7 +12,7 @@ import CreateStory from "../../components/CreateStory";
 function Bookmark() {
   const [width, setWidth] = useState(window.innerWidth);
 
-  const [slides, setSlides] = useState([]);
+  const [slides, setSlides] = useState(null);
   const navigate = useNavigate();
   const [token, setToken] = useState(""); // Store the token.
   const [menu, setMenu] = useState(); // Store the state of hamburger.
@@ -215,9 +215,24 @@ function Bookmark() {
       )}
       {/* Stories section */}
       <div className={styles.allStories}>
-        {slides.map((slide, index) => (
-          <Slide slide={slide.slide} key={index} storyId={slide.storyId} />
-        ))}
+        {slides != null ? (
+          slides.length == 0 ? (
+            <span
+              style={{
+                width: "100%",
+                textAlign: "center",
+              }}
+            >
+              Your bookmark is empty!
+            </span>
+          ) : (
+            slides.map((slide, index) => (
+              <Slide slide={slide.slide} key={index} storyId={slide.storyId} />
+            ))
+          )
+        ) : (
+          <div className="loader"></div>
+        )}
       </div>
 
       {currentState.create && <CreateStory setCurrentState={setCurrentState} />}

@@ -122,4 +122,32 @@ router.get("/single/:storyId", authMiddleware, async (req, res, next) => {
   }
 });
 
+// Get random story Id and slide Id
+router.get("/random", async (req, res, next) => {
+  try {
+    const data = await Stories.aggregate([
+      {
+        $sample: { size: 1 },
+      },
+      {
+        $addFields: {
+          slideId: {
+            $arrayElemAt: ["$slides._id", 0],
+          },
+        },
+      },
+      {
+        $project: {
+          _id: 1,
+          slideId: 1,
+        },
+      },
+    ]);
+
+    return res.json(data[0]);
+  } catch (error) {
+    next(error);
+  }
+});
+
 module.exports = router;

@@ -8,9 +8,9 @@ import crossIcon from "../../assets/cross.png";
 import shareIcon from "../../assets/share.png";
 import lessIcon from "../../assets/less.png";
 import greatIcon from "../../assets/great.png";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useParams } from "react-router-dom";
-import { getStoryByIdAndSlide } from "../../apis/story";
+import { getRandomId, getStoryByIdAndSlide } from "../../apis/story";
 import { useEffect } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import { useState } from "react";
@@ -24,7 +24,7 @@ import soundIcon from "../../assets/sound-on.png";
 
 function ViewStory() {
   const [width, setWidth] = useState(window.innerWidth);
-
+  const location = useLocation();
   const { setCurrentState } = useOutletContext();
   const navigate = useNavigate();
   const { id, slideId } = useParams(); // Story id and slide id.
@@ -39,6 +39,7 @@ function ViewStory() {
   // State to manage if the video is muted or not
   const [isMuted, setIsMuted] = useState(true);
   const videoRef = useRef(null);
+  const currentStoryId = useRef(id);
 
   // Function to toggle mute/unmute
   const toggleMute = () => {
@@ -49,10 +50,14 @@ function ViewStory() {
     const handleResize = () => setWidth(window.innerWidth);
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
-  }, []);
+  }, [location]);
 
   // loads story.
   useEffect(() => {
+    if (currentStoryId.current != id) {
+      currentStoryId.current = id;
+      loadOnce.current = true;
+    }
     if (loadOnce.current) {
       getStoryByIdAndSlide(id, slideId)
         .then((res) => {
@@ -93,7 +98,7 @@ function ViewStory() {
     //     }, 3000);
     //   }
     // }
-  }, []);
+  }, [location]);
 
   function download() {
     return new Promise((resolve, reject) => {
@@ -126,6 +131,17 @@ function ViewStory() {
             if (width < 769) {
               e.stopPropagation();
             }
+            setBookAndLike(id, bookmarkState, likeState)
+              .then((res) => {
+                if (!(res.status == 200)) {
+                  toast.error(
+                    "Something went wrong while saving bookmark and like!"
+                  );
+                }
+              })
+              .catch((err) => {
+                console.log(err);
+              });
           }}
           style={{
             left: width < 769 ? "0px" : "",
@@ -159,12 +175,12 @@ function ViewStory() {
                 if (localStorage.getItem("slideURL")) {
                   localStorage.removeItem("slideURL");
                 }
+
                 if (localStorage.getItem("token")) {
+                  navigate("/");
                   setBookAndLike(id, bookmarkState, likeState)
                     .then((res) => {
-                      if (res.status == 200) {
-                        navigate("/");
-                      } else {
+                      if (!(res.status == 200)) {
                         toast.error(
                           "Something went wrong while saving bookmark and like!"
                         );
@@ -194,7 +210,15 @@ function ViewStory() {
 
           {/* Slide */}
           {Object.keys(storyInfo).length == 0 ? (
-            "Loading..."
+            <div
+              className="loader"
+              style={{
+                position: "absolute",
+                top: "48%",
+                left: "45.5%",
+                opacity: "0.2",
+              }}
+            ></div>
           ) : (
             <>
               {storyInfo.slides[visitIndex].imageURL.match(
@@ -330,10 +354,31 @@ function ViewStory() {
                 `/view/${id}/slide/${storyInfo.slides[visitIndex + 1]._id}`
               );
               setVisitIndex(visitIndex + 1);
+            } else {
+              getRandomId().then((res) => {
+                if (res.status == 200) {
+                  navigate(`/view/${res.data._id}/slide/${res.data.slideId}`);
+                } else {
+                  toast.error(
+                    "Something went wrong while loading next story!!!"
+                  );
+                }
+              });
             }
             if (width < 769) {
               e.stopPropagation();
             }
+            setBookAndLike(id, bookmarkState, likeState)
+              .then((res) => {
+                if (!(res.status == 200)) {
+                  toast.error(
+                    "Something went wrong while saving bookmark and like!"
+                  );
+                }
+              })
+              .catch((err) => {
+                console.log(err);
+              });
           }}
           style={{
             right: width < 769 ? "0px" : "",

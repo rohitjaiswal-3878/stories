@@ -119,6 +119,18 @@ const updateStory = async (storyId, slides) => {
   }
 };
 
+const getRandomId = async () => {
+  try {
+    const response = await axios.get(
+      `${import.meta.env.VITE_APP_BACKEND}/story/random`
+    );
+
+    return response;
+  } catch (error) {
+    return error.response;
+  }
+};
+
 export {
   createStory,
   getAllStories,
@@ -126,4 +138,5 @@ export {
   getStoriesByCategory,
   getStory,
   updateStory,
+  getRandomId,
 };

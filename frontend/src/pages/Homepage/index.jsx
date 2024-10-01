@@ -25,7 +25,7 @@ function Homepage() {
 
   const [token, setToken] = useState(""); // Store the token.
   const [menu, setMenu] = useState(); // Store the state of hamburger.
-  const [yourStories, setYourStories] = useState([]); // Store your stories.
+  const [yourStories, setYourStories] = useState(null); // Store your stories.
   const [seeMore, setSeeMore] = useState(""); // Store the state of see more button.
   const categories = [
     {
@@ -59,6 +59,7 @@ function Homepage() {
   const [toggleMenu, setToggleMenu] = useState(false);
   const [toggleYourStory, setToggleYourStory] = useState(false);
 
+  const [filterLoader, setFilterLoader] = useState(false);
   const [currentState, setCurrentState] = useState({
     login: false,
     register: false,
@@ -96,6 +97,7 @@ function Homepage() {
     getStoriesByCategory(selCat)
       .then((res) => {
         if (res.status == 200) {
+          setFilterLoader(false);
           setStories(res.data);
         }
       })
@@ -107,6 +109,7 @@ function Homepage() {
   // Handle category selection part.
   const handleSelCat = (category) => {
     setSeeMore("");
+    setFilterLoader(true);
     if (category == "all") {
       setSelCat(["all"]);
     } else {
@@ -304,36 +307,56 @@ function Homepage() {
           {/* Your story section. */}
 
           {width > 768 &&
-            yourStories.length != 0 &&
-            (seeMore == "your" || seeMore == "") && (
-              <Stories
-                stories={yourStories}
-                seeMore={seeMore}
-                section={"your"}
-                setSeeMore={setSeeMore}
-                userId={yourStories[0].userId}
-              >
-                <span>Your Stories</span>
-              </Stories>
-            )}
+            (yourStories == null ? (
+              <div
+                className="loader"
+                style={{
+                  marginTop: "20px",
+                }}
+              ></div>
+            ) : (
+              yourStories.length != 0 &&
+              (seeMore == "your" || seeMore == "") && (
+                <Stories
+                  stories={yourStories}
+                  seeMore={seeMore}
+                  section={"your"}
+                  setSeeMore={setSeeMore}
+                  userId={yourStories[0].userId}
+                >
+                  <span>Your Stories</span>
+                </Stories>
+              )
+            ))}
 
           {/* Other stories section. */}
-          {Object.keys(stories).map((cat, i) => {
-            if (seeMore == cat || seeMore == "") {
-              return (
-                <Stories
-                  seeMore={seeMore}
-                  setSeeMore={setSeeMore}
-                  key={i}
-                  section={cat}
-                  stories={stories[cat]}
-                  userId={yourStories.length != 0 ? yourStories[0].userId : ""}
-                >
-                  <span>Top Stories About {cat}</span>
-                </Stories>
-              );
-            }
-          })}
+          {filterLoader ? (
+            <div
+              className="loader"
+              style={{
+                marginTop: "10px",
+              }}
+            ></div>
+          ) : (
+            Object.keys(stories).map((cat, i) => {
+              if (seeMore == cat || seeMore == "") {
+                return (
+                  <Stories
+                    seeMore={seeMore}
+                    setSeeMore={setSeeMore}
+                    key={i}
+                    section={cat}
+                    stories={stories[cat]}
+                    userId={
+                      yourStories.length != 0 ? yourStories[0].userId : ""
+                    }
+                  >
+                    <span>Top Stories About {cat}</span>
+                  </Stories>
+                );
+              }
+            })
+          )}
         </div>
       ) : (
         yourStories.length != 0 &&
