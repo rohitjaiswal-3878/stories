@@ -131,17 +131,19 @@ function ViewStory() {
             if (width < 769) {
               e.stopPropagation();
             }
-            setBookAndLike(id, bookmarkState, likeState)
-              .then((res) => {
-                if (!(res.status == 200)) {
-                  toast.error(
-                    "Something went wrong while saving bookmark and like!"
-                  );
-                }
-              })
-              .catch((err) => {
-                console.log(err);
-              });
+            if (localStorage.getItem("token")) {
+              setBookAndLike(id, bookmarkState, likeState)
+                .then((res) => {
+                  if (!(res.status == 200)) {
+                    toast.error(
+                      "Something went wrong while saving bookmark and like!"
+                    );
+                  }
+                })
+                .catch((err) => {
+                  console.log(err);
+                });
+            }
           }}
           style={{
             left: width < 769 ? "0px" : "",
@@ -368,17 +370,19 @@ function ViewStory() {
             if (width < 769) {
               e.stopPropagation();
             }
-            setBookAndLike(id, bookmarkState, likeState)
-              .then((res) => {
-                if (!(res.status == 200)) {
-                  toast.error(
-                    "Something went wrong while saving bookmark and like!"
-                  );
-                }
-              })
-              .catch((err) => {
-                console.log(err);
-              });
+            if (localStorage.getItem("token")) {
+              setBookAndLike(id, bookmarkState, likeState)
+                .then((res) => {
+                  if (!(res.status == 200)) {
+                    toast.error(
+                      "Something went wrong while saving bookmark and like!"
+                    );
+                  }
+                })
+                .catch((err) => {
+                  console.log(err);
+                });
+            }
           }}
           style={{
             right: width < 769 ? "0px" : "",

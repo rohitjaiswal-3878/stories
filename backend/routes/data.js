@@ -90,6 +90,7 @@ router.get("/like/:storyId", async (req, res, next) => {
 router.get("/bookmark", authMiddleware, async (req, res, next) => {
   try {
     const userId = req.body.userId;
+
     const data = await Data.aggregate([
       {
         $match: {
