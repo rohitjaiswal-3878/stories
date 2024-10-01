@@ -164,6 +164,7 @@
         .slides {
             height: 100svh;
             width: 100svw;
+            border-radius: 0px;
         }
     
         .control {
