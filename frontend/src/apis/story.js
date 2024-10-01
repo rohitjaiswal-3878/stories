@@ -68,11 +68,15 @@ const getStoriesByCategory = async (selCat) => {
         headers: {
           "x-token": localStorage.getItem("token"),
         },
+      },
+      {
+        timeout: 10000,
       }
     );
 
     return response;
   } catch (error) {
+    console.log(error);
     return error.response;
   }
 };

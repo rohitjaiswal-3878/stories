@@ -80,12 +80,12 @@ function Homepage() {
 
   // Gets the data on category change.
   useEffect(() => {
-    getData();
-    // Gets your stories.
+    getData(); // Gets your stories.
   }, [selCat, currentState]);
 
   // Gets your story and all other stories created by other user.
   function getData() {
+    console.log("yes");
     if (localStorage.getItem("token")) {
       getAllStories()
         .then((res) => {
@@ -104,7 +104,7 @@ function Homepage() {
         }
       })
       .catch((err) => {
-        toast.error("Something went wrong!");
+        toast.error("Something went wrong while loading category stories!");
       });
   }
 
