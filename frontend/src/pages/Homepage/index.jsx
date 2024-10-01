@@ -94,6 +94,7 @@ function Homepage() {
           toast.error("Something went wrong while loading your stories!");
         });
     }
+    setFilterLoader(true);
     getStoriesByCategory(selCat)
       .then((res) => {
         if (res.status == 200) {
@@ -306,7 +307,8 @@ function Homepage() {
 
           {/* Your story section. */}
 
-          {width > 768 &&
+          {localStorage.getItem("token") &&
+            width > 768 &&
             (yourStories == null ? (
               <div
                 className="loader"
@@ -348,7 +350,11 @@ function Homepage() {
                     section={cat}
                     stories={stories[cat]}
                     userId={
-                      yourStories.length != 0 ? yourStories[0].userId : ""
+                      yourStories != null
+                        ? yourStories.length != 0
+                          ? yourStories[0].userId
+                          : ""
+                        : ""
                     }
                   >
                     <span>Top Stories About {cat}</span>
