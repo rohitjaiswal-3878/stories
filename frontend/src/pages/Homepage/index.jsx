@@ -80,9 +80,7 @@ function Homepage() {
 
   // Gets the data on category change.
   useEffect(() => {
-    if (!currentState.login && !currentState.register && !currentState.create) {
-      getData();
-    }
+    getData();
     // Gets your stories.
   }, [selCat, currentState]);
 
