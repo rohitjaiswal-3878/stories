@@ -6,6 +6,15 @@ import { useNavigate } from "react-router-dom";
 function Story({ story, userId }) {
   const navigate = useNavigate();
 
+  function trimHeading(str) {
+    if (str.split("").length <= 25) {
+      return str;
+    }
+    return str.substring(0, 25) + "...";
+  }
+  function trimDescription(str) {
+    return str.substring(0, 80) + " . . .";
+  }
   return (
     <div className={styles.story}>
       {/* Image or video. */}
@@ -17,8 +26,8 @@ function Story({ story, userId }) {
 
       {/* Heading and description. */}
       <div className={styles.details}>
-        <h2>{story.slides[0].heading}</h2>
-        <p>{story.slides[0].description}</p>
+        <h2>{trimHeading(story.slides[0].heading)}</h2>
+        <p>{trimDescription(story.slides[0].description)}</p>
       </div>
 
       {/* Edit button. */}

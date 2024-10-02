@@ -61,9 +61,15 @@ function ViewStory() {
     if (loadOnce.current) {
       getStoryByIdAndSlide(id, slideId)
         .then((res) => {
-          setStoryInfo({ ...res.data });
-          setVisitIndex(res.data.visitIndex);
-          loadOnce.current = false;
+          console.log(res);
+          if (res.data.visitIndex == -1) {
+            navigate("*");
+          }
+          if (res.status == 200) {
+            setStoryInfo({ ...res.data });
+            setVisitIndex(res.data.visitIndex);
+            loadOnce.current = false;
+          }
         })
         .catch((err) => {
           toast.error("Something went wrong!");

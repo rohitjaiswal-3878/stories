@@ -68,7 +68,7 @@ function Register({ setCurrentState }) {
       setLoader(true);
       registerUser(formData).then((res) => {
         if (res.status == 200) {
-          toast.success(res.data.msg);
+          toast.success(res.data.msg + " please login to proceed.");
           setFormData({
             username: "",
             password: "",
