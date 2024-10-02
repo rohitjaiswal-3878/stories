@@ -61,7 +61,6 @@ function ViewStory() {
     if (loadOnce.current) {
       getStoryByIdAndSlide(id, slideId)
         .then((res) => {
-          console.log(res);
           if (res.data.visitIndex == -1) {
             navigate("*");
           }
