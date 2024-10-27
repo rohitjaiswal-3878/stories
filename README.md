@@ -30,6 +30,5 @@ A web platform where users can create, view, and interact with stories. Stories 
 - **Backend**: Node.js, Express.js
 - **Database**: MongoDB
 - **Authentication**: JWT (JSON Web Tokens)
-- **File Uploads**: Multer (for handling images and video uploads)
 
 [DEMO](https://stories-orpin.vercel.app/)
